@@ -94,7 +94,7 @@ class physical_space:
         id_i, id_j = tools.filter_vector([id_i, id_j], keep)
 
         el_list = np.ones_like(x, dtype=int) * -1
-        el_list[keep] = self.id[tuple(zip((id_i, id_j)))][0]
+        el_list[keep] = self.id[id_i, id_j]
 
         # finally update the number to account for removed elements
         # have to look at the P construction if I include this here
