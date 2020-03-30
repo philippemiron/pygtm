@@ -29,15 +29,17 @@ class matrix_space:
     def fill_transition_matrix(self, data):
         """
         Calculate the transition matrix of all points (x0, y0) to (xT, yT) on grid domain.bins
-        :param segments: object containing initial and final points of trajectories segments
-        :      data.x0: array longitude of segment initial points
-        :      data.y0: array latitude of segment initial points
-        :      data.xT: array longitude of segment T days later
-        :      data.yT: array latitude of segment T days later
-        :return:
-          B[N]: containing particles at initial time for each bin
-          P[N,N]: transition matrix
-          M[N]: number of particles per bins at time t
+        Args:
+            data: object containing initial and final points of trajectories segments
+                data.x0: array longitude of segment initial points
+                data.y0: array latitude of segment initial points
+                data.xT: array longitude of segment T days later
+                data.yT: array latitude of segment T days later
+
+        Returns:
+            B: containing particles at initial time for each bin
+            P: transition matrix
+            M: number of particles per bins at time t
         """
         # Function to evaluate the transition Matrix
         # For each elements id [1:N]
@@ -54,7 +56,8 @@ class matrix_space:
 
         print('%g empty bins out of %g bins. (%1.2f%%)' % (
             len(self.B) - sum(keep), len(self.B), (len(self.B) - sum(keep)) / len(self.B) * 100))
-        self.B, self.domain.bins, self.domain.id_og = tools.filter_vector([self.B, self.domain.bins, self.domain.id_og], keep)
+        self.B, self.domain.bins, self.domain.id_og = tools.filter_vector([self.B, self.domain.bins, self.domain.id_og],
+                                                                          keep)
         self.N = len(self.domain.bins)
 
         # Fill-in Transition Matrix P
@@ -90,10 +93,17 @@ class matrix_space:
 
         # calculate variables useful for postprocessing
         self.transition_matrix_extras(data)
-
         return
 
     def transition_matrix_extras(self, data):
+        """
+        Miscellaneous operations perform after the calculations of the transition matrix
+        Args:
+            data: trajectory object
+
+        Returns:
+            None
+        """
         d = self.domain
         in_domain = np.all((data.x0 >= d.lon[0], data.x0 <= d.lon[1],
                             data.y0 >= d.lat[0], data.y0 <= d.lat[1]), axis=0)
@@ -109,16 +119,19 @@ class matrix_space:
         _, self.ccs = connected_components(self.P, directed=True, connection='strong')
         _, components_count = np.unique(self.ccs, return_counts=True)
         self.largest_cc = np.where(self.ccs == np.argmax(components_count))[0]
-
         return
 
     @staticmethod
     def eigenvectors(m, n):
-        """Calculate n real eigenvalues and eigenvectors of the matrix mat
-        m: square matrix
-        n: number of eigenvalues and eigenvectors to calculate
-        d: top n real eigenvalues in descending order
-        v: top n eigenvectors associated with eigenvalues d
+        """
+        Calculate n real eigenvalues and eigenvectors of the matrix mat
+        Args:
+            m: square matrix
+            n: number of eigenvalues and eigenvectors to calculate
+
+        Returns:
+            d: top n real eigenvalues in descending order
+            v: top n eigenvectors associated with eigenvalues d
         """
         if n is None:
             d, v = sla.eig(m)  # all eigenvectors
@@ -134,36 +147,66 @@ class matrix_space:
         real_i = d.imag == 0
         d = d[real_i].real
         v = maxabs_scale(v[:, real_i].real)
-
         return d, v
 
     def left_and_right_eigenvectors(self, n=None):
         """
-        :param n: number of eigenvectors to calculate (default all)
-        :return:
+        Function to call eigenvectors() for left and right calculations
+        Args:
+            n: number of eigenvectors to calculate (default all)
+
+        Returns:
+            eigR: right eigenvalues
+            eigL: left eigenvalues (equal to eigR in our case)
+            R: right eigenvectors
+            L: left eigenvectors
         """
         self.eigR, self.R = self.eigenvectors(self.P, n)
         self.eigL, self.L = self.eigenvectors(np.transpose(self.P), n)
 
     def lagrangian_geography(self, selected_vec, n_clusters):
+        """
+        Cluster the eigenvectors to evaluate the Lagrangian Geography
+        Args:
+            selected_vec: list of selected eigenvectors
+            n_clusters: number of clusters
+
+        Returns:
+            cluster_labels: array corresponding to the cluster associated with each bin
+        """
         # restrict the analysis to the largest strongly connected components
         vectors_geo = self.R[np.ix_(self.largest_cc, selected_vec)]
         model = KMeans(n_clusters=n_clusters, random_state=1).fit(vectors_geo)
 
         cluster_labels = np.zeros(self.N)
         cluster_labels[self.largest_cc] = model.labels_
-
         return cluster_labels
 
     def push_forward(self, d0, exp):
+        """
+        Dispersion of a initial distribution
+        Args:
+            d0: initial distribution
+            exp: proportional to the time to evolve the density (time = exp*T)
+
+        Returns:
+            d: evolved density at t0 + exp*T
+        """
         # for loop is faster than using matrix_power() with big matrix
         d = np.copy(d0)
         for i in range(0, exp):
             d = d @ self.P
-
         return d
 
     def matrix_to_graph(self, mat=None):
+        """
+        Transform the transition matrix into a graph
+        Args:
+            mat: transition matrix
+
+        Returns:
+            graph: dictionary where each key is a node and the values are its connection(s)
+        """
         graph = {}
 
         if mat is None:

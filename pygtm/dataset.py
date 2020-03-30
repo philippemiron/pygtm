@@ -18,6 +18,14 @@ class trajectory:
 
     @staticmethod
     def monotonic(x):
+        """
+        Test if an array is in a monotonic order
+        Args:
+            x: array
+
+        Returns:
+            True or False
+        """
         # True if array is monotonic.
         # monotonic(X) returns True (False) if X is (not) monotonic.
         if len(x) == 1:
@@ -34,11 +42,18 @@ class trajectory:
 
     @staticmethod
     def trajectory_interpolation(t, x, y, s):
-        """Interpolation function
-        x(t), y(t) describe the locations at time t of a trajectory
-        x,y: known location
-        s: oversampling coefficient (1: daily interpolation, 2: bidaily, 12: every 2h, etc.)
-        xi(ti), yi(ti): interpolated location at time ti
+        """
+        Interpolation function x(t), y(t) describe the locations at time t of a trajectory
+        Args:
+            t: time t of a trajectory
+            x: longitude of the trajectory
+            y: latitude of the trajectory
+            s: oversampling coefficient (1: daily interpolation, 2: bidaily, 12: every 2h, etc.)
+
+        Returns:
+            ti: time of the interpolated trajectory
+            fx(ti): longitude of the trajectory at the interpolated time
+            fy(ti): latitude of the trajectory at the interpolated time
         """
         # interpolation functions
         fx = interp1d(t, x)
@@ -52,9 +67,13 @@ class trajectory:
     @staticmethod
     def intersection_ratio(x1, x2):
         """
-        :param x1: longitude on one side of the ±180 meridian
-        :param x2: longitude on the other side of the ±180 meridian
-        :return: the ratio between x1 and ±180 meridian over x1 and x2
+        Function used to interpolate trajectories at the ±180 meridian
+        Args:
+            x1: longitude on one side of the ±180 meridian
+            x2: longitude on the other side of the ±180 meridian
+
+        Returns:
+            the ratio between x1 and ±180 meridian over x1 and x2
         """
         if x1 < 0:
             return (x1 + 180) / (360 - np.abs(x1 - x2))
@@ -63,14 +82,17 @@ class trajectory:
 
     def create_segments(self, T):
         """
-        :param T: transition time which is the length of each segment
-        :param x: list of longitude
-        :param y: list of latitude
-        :param t: list of time
-        :param index: list same length of x,y,t to identify drifter change
-        :return: x0, y0, xt, yt for each drifters where for all i: (x0[i], y0[i]) and (xt[i], yt[i]) are separated by T
-        """
+        Subdivide full trajectories into a list of segments of T days
+        Args:
+            T: transition time
 
+        Returns:
+            x0: longitude of each segments at time t0
+            y0: latitude of each segments at time t0
+            xt: longitude of each segments at time t0+T
+            yt: latitude of each segments at time t0+T
+
+        """
         oversampling = 1  # times per days
         offset = oversampling * abs(T)
 
@@ -139,7 +161,7 @@ class trajectory:
                         # three cases if we add 180° at the beginning, end or both side of the segment
                         if i == 0:  # first segment cross at the end
                             # find ratio between 180° and the to points that cross it
-                            r = self.intersection_ratio(xs[-1], x[next_p])
+                            r = self.intersection_ratio(xs[-1], self.x[next_p])
                             # add values at 180°
                             xs = np.insert(xs, len(xs), np.sign(xs[-1]) * 180)
                             ys = np.insert(ys, len(ys), ys[-1] + r * diff_y[next_p - 1])
@@ -153,8 +175,8 @@ class trajectory:
                             ts = np.insert(ts, 0, ts[0] - (1 - r) * diff_t[prev_p])
 
                         else:  # middle segments crosses back and forth
-                            r1 = self.intersection_ratio(x[prev_p], xs[0])
-                            r2 = self.intersection_ratio(xs[-1], x[next_p])
+                            r1 = self.intersection_ratio(self.x[prev_p], xs[0])
+                            r2 = self.intersection_ratio(xs[-1], self.x[next_p])
                             # add values at 180°
                             xs = np.insert(xs, [0, len(xs)], [np.sign(xs[0]) * 180, np.sign(xs[-1]) * 180])
                             ys = np.insert(ys, [0, len(ys)],
@@ -188,19 +210,27 @@ class trajectory:
             self.xt = xt
             self.yt = yt
         else:
+            # invert the points
             self.x0 = xt
             self.y0 = yt
             self.xt = x0
             self.yt = y0
 
-    @staticmethod
-    def colored_segments(x, y, c, colormap):
-        pts = np.array([x, y]).T.reshape(-1, 1, 2)
-        segments = np.concatenate([pts[:-1], pts[1:]], axis=1)
-        segments_color = colormap((c - np.min(c)) / (np.max(c) - np.min(c)))
-        return segments, segments_color
-
     def filtering(self, x_range=None, y_range=None, t_range=None, complete_track=True):
+        """
+        Filter the trajectory in a spatial or temporal range
+        Args:
+            x_range: longitudinal range
+            y_range: meridional range
+            t_range: temporal range
+            complete_track: True: full trajectories is plotted
+                            False: trajectories is plotted after it reaches the region
+
+        Returns:
+            segments: LineCollection object
+            segs_id: array to know what segments are part of the same trajectory
+                     ex: trajectory 0 contains the segments[segs_id[0]:segs_id[0+1]]
+        """
         if x_range is None:
             x_range = [np.min(self.x), np.max(self.x)]
         if y_range is None:
@@ -214,7 +244,7 @@ class trajectory:
 
         segs = np.empty((0, 2, 2))
         segs_c = np.empty(0)
-        segs_ind = np.zeros((0,2), dtype='int')
+        segs_ind = np.zeros((0, 2), dtype='int')
         cc = 0
         for j in range(0, len(I) - 1):
             xd = self.x[I[j] + 1:I[j + 1] + 1]
@@ -244,8 +274,7 @@ class trajectory:
                 # combine to the global segments list
                 segs = np.concatenate((segs, segs_i), axis=0)
                 segs_c = np.concatenate((segs_c, segs_c_i), axis=0)
-                segs_ind = np.vstack((segs_ind, np.array([I[j + 1] + 1 - len(xd), I[j + 1] + 1])))
+                segs_ind = np.vstack((segs_ind, np.array([I[j] + 1 + reach, I[j + 1]])))
         segments = LineCollection(segs, linewidths=0.25)
         segments.set_array(segs_c)
-
         return segments, segs_ind
