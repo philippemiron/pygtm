@@ -1,19 +1,20 @@
 import numpy as np
+from matplotlib.collections import LineCollection
 from scipy.interpolate import interp1d
 
 
-class split_trajectories:
-    def __init__(self, T, x, y, t, ids):
+class trajectory:
+    def __init__(self, x, y, t, ids):
 
-        if T > 0:
-            x0, y0, xT, yT = self.segments(T, x, y, t, ids)
-        else:
-            xT, yT, x0, y0 = self.segments(abs(T), x, y, t, ids)
-
-        self.x0 = x0
-        self.y0 = y0
-        self.xT = xT
-        self.yT = yT
+        # store trajectory data
+        self.x = x
+        self.y = y
+        self.t = t
+        self.ids = ids
+        self.x0 = None
+        self.y0 = None
+        self.xt = None
+        self.yt = None
 
     @staticmethod
     def monotonic(x):
@@ -60,40 +61,40 @@ class split_trajectories:
         else:
             return (180 - x1) / (360 - np.abs(x1 - x2))
 
-    def segments(self, T, x, y, t, index):
+    def create_segments(self, T):
         """
         :param T: transition time which is the length of each segment
         :param x: list of longitude
         :param y: list of latitude
         :param t: list of time
         :param index: list same length of x,y,t to identify drifter change
-        :return: x0, y0, xT, yT for each drifters where for all i: (x0[i], y0[i]) and (xT[i], yT[i]) are separated by T
+        :return: x0, y0, xt, yt for each drifters where for all i: (x0[i], y0[i]) and (xt[i], yt[i]) are separated by T
         """
 
         oversampling = 1  # times per days
-        offset = oversampling * T
+        offset = oversampling * abs(T)
 
         # real size loop all trajectories, count total days, multiply by oversampling
         # defined a big vector but output only 0:ptr at the end of the functions
         # should but fine but in theory can still be too short and crash on low frequency trajectories
-        x0 = np.zeros(len(x) * oversampling * 20)
-        y0 = np.zeros(len(x) * oversampling * 20)
-        xT = np.zeros(len(x) * oversampling * 20)
-        yT = np.zeros(len(x) * oversampling * 20)
+        x0 = np.zeros(len(self.x) * oversampling * 20)
+        y0 = np.zeros(len(self.x) * oversampling * 20)
+        xt = np.zeros(len(self.x) * oversampling * 20)
+        yt = np.zeros(len(self.x) * oversampling * 20)
 
         # create index where we change drifter in x,y,t
-        I = np.where(abs(np.diff(index, axis=0)) > 0)[0]
-        I = np.insert(I, [0, len(I)], [-1, len(index) - 1])
+        I = np.where(abs(np.diff(self.ids, axis=0)) > 0)[0]
+        I = np.insert(I, [0, len(I)], [-1, len(self.ids) - 1])
 
         # loop each trajectory
         ptr = 0
         for j in range(0, len(I) - 1):
             range_j = range(I[j] + 1, I[j + 1] + 1)
-            t_j = t[range_j]
+            t_j = self.t[range_j]
             days = np.floor(t_j[-1] - t_j[0])
-            if days >= T:
-                xd = x[range_j]
-                yd = y[range_j]
+            if days >= abs(T):
+                xd = self.x[range_j]
+                yd = self.y[range_j]
 
                 # make sure it is ordered correctly
                 if not self.monotonic(t_j):
@@ -172,12 +173,79 @@ class split_trajectories:
                 if x_i.size:
                     x0[ptr:ptr + length] = x_i[0:-offset]
                     y0[ptr:ptr + length] = y_i[0:-offset]
-                    xT[ptr:ptr + length] = x_i[offset:]
-                    yT[ptr:ptr + length] = y_i[offset:]
+                    xt[ptr:ptr + length] = x_i[offset:]
+                    yt[ptr:ptr + length] = y_i[offset:]
                     ptr += length
 
         x0 = x0[:ptr]
         y0 = y0[:ptr]
-        xT = xT[:ptr]
-        yT = yT[:ptr]
-        return x0, y0, xT, yT
+        xt = xt[:ptr]
+        yt = yt[:ptr]
+
+        if T > 0:
+            self.x0 = x0
+            self.y0 = y0
+            self.xt = xt
+            self.yt = yt
+        else:
+            self.x0 = xt
+            self.y0 = yt
+            self.xt = x0
+            self.yt = y0
+
+    @staticmethod
+    def colored_segments(x, y, c, colormap):
+        pts = np.array([x, y]).T.reshape(-1, 1, 2)
+        segments = np.concatenate([pts[:-1], pts[1:]], axis=1)
+        segments_color = colormap((c - np.min(c)) / (np.max(c) - np.min(c)))
+        return segments, segments_color
+
+    def filtering(self, x_range=None, y_range=None, t_range=None, complete_track=True):
+        if x_range is None:
+            x_range = [np.min(self.x), np.max(self.x)]
+        if y_range is None:
+            y_range = [np.min(self.y), np.max(self.y)]
+        if t_range is None:
+            t_range = [np.min(self.t), np.max(self.t)]
+
+        # identified drifters change
+        I = np.where(abs(np.diff(self.ids, axis=0)) > 0)[0]
+        I = np.insert(I, [0, len(I)], [-1, len(self.ids) - 1])
+
+        segs = np.empty((0, 2, 2))
+        segs_c = np.empty(0)
+        segs_ind = np.zeros((0,2), dtype='int')
+        cc = 0
+        for j in range(0, len(I) - 1):
+            xd = self.x[I[j] + 1:I[j + 1] + 1]
+            yd = self.y[I[j] + 1:I[j + 1] + 1]
+            td = self.t[I[j] + 1:I[j + 1] + 1]
+
+            # keep trajectory inside the specific domain and time frame
+            keep = np.logical_and.reduce(
+                (xd > x_range[0], xd < x_range[1], yd > y_range[0], yd < y_range[1], td > t_range[0], td < t_range[1])
+            )
+
+            if np.any(keep):
+                cc += 1
+                # if complete_track: full trajectories is plotted
+                # else: only after reaching the region
+                if not complete_track:
+                    reach = np.argmax(keep)
+                    xd = xd[reach:]
+                    yd = yd[reach:]
+                    td = td[reach:]
+
+                # change array format for LineCollection
+                pts = np.array([xd, yd]).T.reshape(-1, 1, 2)
+                segs_i = np.concatenate([pts[:-1], pts[1:]], axis=1)
+                segs_c_i = np.convolve(td, np.repeat(1.0, 2) / 2, 'valid')
+
+                # combine to the global segments list
+                segs = np.concatenate((segs, segs_i), axis=0)
+                segs_c = np.concatenate((segs_c, segs_c_i), axis=0)
+                segs_ind = np.vstack((segs_ind, np.array([I[j + 1] + 1 - len(xd), I[j + 1] + 1])))
+        segments = LineCollection(segs, linewidths=0.25)
+        segments.set_array(segs_c)
+
+        return segments, segs_ind

@@ -93,7 +93,12 @@ class physical_space:
         keep = np.all((id_i >= 0, id_i < self.ny - 1, id_j >= 0, id_j < self.nx - 1), axis=0)
         id_i, id_j = tools.filter_vector([id_i, id_j], keep)
 
-        el_list = np.ones_like(x, dtype=int) * -1
+        if np.isscalar(x):
+            el_list = np.ones(1, dtype=int) * -1
+        else:
+            el_list = np.ones_like(x, dtype=int) * -1
+
+        # get id from the grid
         el_list[keep] = self.id[id_i, id_j]
 
         # finally update the number to account for removed elements

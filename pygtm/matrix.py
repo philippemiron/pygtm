@@ -26,14 +26,14 @@ class matrix_space:
         self.largest_cc = None
         self.ccs = None
 
-    def fill_transition_matrix(self, segments):
+    def fill_transition_matrix(self, data):
         """
         Calculate the transition matrix of all points (x0, y0) to (xT, yT) on grid domain.bins
         :param segments: object containing initial and final points of trajectories segments
-        :      segments.x0: array longitude of segment initial points
-        :      segments.y0: array latitude of segment initial points
-        :      segments.xT: array longitude of segment T days later
-        :      segments.yT: array latitude of segment T days later
+        :      data.x0: array longitude of segment initial points
+        :      data.y0: array latitude of segment initial points
+        :      data.xT: array longitude of segment T days later
+        :      data.yT: array latitude of segment T days later
         :return:
           B[N]: containing particles at initial time for each bin
           P[N,N]: transition matrix
@@ -42,7 +42,7 @@ class matrix_space:
         # Function to evaluate the transition Matrix
         # For each elements id [1:N]
         # B[id] stores the index of all particles in this bin at time t0
-        idel = self.domain.find_element(segments.x0, segments.y0)
+        idel = self.domain.find_element(data.x0, data.y0)
         self.B = [[] for i in range(0, self.N)]
         for i in range(0, len(idel)):
             if idel[i] != -1:
@@ -63,7 +63,7 @@ class matrix_space:
         self.P = np.zeros((self.N, self.N))
         for i in range(0, self.N):
             # get elements of all particles in bins B[i] at the final time (-1 when outside of domain)
-            idel = self.domain.find_element(segments.xT[self.B[i]], segments.yT[self.B[i]])
+            idel = self.domain.find_element(data.xt[self.B[i]], data.yt[self.B[i]])
             idel = idel[idel > -1]
 
             if idel.size:
@@ -89,18 +89,18 @@ class matrix_space:
         self.N = len(self.P)
 
         # calculate variables useful for postprocessing
-        self.transition_matrix_extras(segments)
+        self.transition_matrix_extras(data)
 
         return
 
-    def transition_matrix_extras(self, segments):
+    def transition_matrix_extras(self, data):
         d = self.domain
-        in_domain = np.all((segments.x0 >= d.lon[0], segments.x0 <= d.lon[1],
-                            segments.y0 >= d.lat[0], segments.y0 <= d.lat[1]), axis=0)
+        in_domain = np.all((data.x0 >= d.lon[0], data.x0 <= d.lon[1],
+                            data.y0 >= d.lat[0], data.y0 <= d.lat[1]), axis=0)
         coming_in = np.all((~in_domain,
-                            segments.xT >= d.lon[0], segments.xT <= d.lon[1],
-                            segments.yT >= d.lat[0], segments.yT <= d.lat[1]), axis=0)
-        idel = d.find_element(segments.xT[np.where(coming_in)], segments.yT[np.where(coming_in)])
+                            data.xt >= d.lon[0], data.xt <= d.lon[1],
+                            data.yt >= d.lat[0], data.yt <= d.lat[1]), axis=0)
+        idel = d.find_element(data.xt[np.where(coming_in)], data.yt[np.where(coming_in)])
         fi = np.bincount(idel[idel > -1], minlength=self.N)
         self.fi = fi / np.sum(fi)  # where particles are coming in
         self.fo = 1 - np.sum(self.P, 1)  # where particles are coming out
