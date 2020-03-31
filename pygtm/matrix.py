@@ -172,15 +172,12 @@ class matrix_space:
             n_clusters: number of clusters
 
         Returns:
-            cluster_labels: array corresponding to the cluster associated with each bin
+            model.labels_: array corresponding to the cluster associated with each bin
         """
-        # restrict the analysis to the largest strongly connected components
-        vectors_geo = self.R[np.ix_(self.largest_cc, selected_vec)]
+        vectors_geo = self.R[:, selected_vec]
         model = KMeans(n_clusters=n_clusters, random_state=1).fit(vectors_geo)
 
-        cluster_labels = np.zeros(self.N)
-        cluster_labels[self.largest_cc] = model.labels_
-        return cluster_labels
+        return model.labels_
 
     def push_forward(self, d0, exp):
         """

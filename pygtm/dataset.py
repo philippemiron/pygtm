@@ -168,7 +168,7 @@ class trajectory:
                             ts = np.insert(ts, len(ts), ts[-1] + r * diff_t[next_p - 1])
 
                         elif i == len(idc) - 2:  # last segment cross beginning
-                            r = self.intersection_ratio(x[prev_p], xs[0])
+                            r = self.intersection_ratio(self.x[prev_p], xs[0])
                             # add values at 180°
                             xs = np.insert(xs, 0, np.sign(xs[0]) * 180)
                             ys = np.insert(ys, 0, ys[0] - (1 - r) * diff_y[prev_p])
