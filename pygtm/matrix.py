@@ -110,10 +110,17 @@ class matrix_space:
         coming_in = np.all((~in_domain,
                             data.xt >= d.lon[0], data.xt <= d.lon[1],
                             data.yt >= d.lat[0], data.yt <= d.lat[1]), axis=0)
+
+        # where particles are coming in
         idel = d.find_element(data.xt[np.where(coming_in)], data.yt[np.where(coming_in)])
-        fi = np.bincount(idel[idel > -1], minlength=self.N)
-        self.fi = fi / np.sum(fi)  # where particles are coming in
-        self.fo = 1 - np.sum(self.P, 1)  # where particles are coming out
+        if idel.size:
+            fi = np.bincount(idel[idel > -1], minlength=self.N)
+            self.fi = fi / np.sum(fi)
+        else:
+            self.fi = np.zeros(self.N)
+
+        # where particles are coming out
+        self.fo = 1 - np.sum(self.P, 1)
 
         # calculate the connected components
         _, self.ccs = connected_components(self.P, directed=True, connection='strong')
@@ -146,7 +153,8 @@ class matrix_space:
         # keep only real eigenvectors
         real_i = d.imag == 0
         d = d[real_i].real
-        v = maxabs_scale(v[:, real_i].real)
+        v = v[:, real_i].real
+        v = maxabs_scale(v)
         return d, v
 
     def left_and_right_eigenvectors(self, n=None):
