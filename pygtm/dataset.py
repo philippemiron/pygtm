@@ -269,12 +269,16 @@ class trajectory:
                 # change array format for LineCollection
                 pts = np.array([xd, yd]).T.reshape(-1, 1, 2)
                 segs_i = np.concatenate([pts[:-1], pts[1:]], axis=1)
-                segs_c_i = np.convolve(td, np.repeat(1.0, 2) / 2, 'valid')
+                if len(segs_i) > 1:
+                    # average per segments
+                    segs_c_i = np.convolve(td, np.repeat(1.0, 2) / 2, 'valid') 
+                else:
+                    segs_c_i = td
 
                 # combine to the global segments list
                 segs = np.concatenate((segs, segs_i), axis=0)
                 segs_c = np.concatenate((segs_c, segs_c_i), axis=0)
-                segs_ind = np.vstack((segs_ind, np.array([I[j] + 1 + reach, I[j + 1]])))
+                segs_ind = np.vstack((segs_ind, np.array([I[j] + 1, I[j + 1]])))
         segments = LineCollection(segs, linewidths=0.25)
         segments.set_array(segs_c)
         return segments, segs_ind
