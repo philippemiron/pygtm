@@ -5,7 +5,7 @@
 - examples: Jupyter notebook are available to help interacting with the program
 - papers: codes for published papers (coming soon!)
 
-### Used in the scientific publications
+### Used in the following scientific publications
 - Unveiling North Atlantic Deep Water pathways using nonlinear dynamics techniques, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, M.S. Lozier, L. Helfmann and P. Koltai, Preprint, TBD
 - Influence of the Loop Current of the Gulf of Mexico connectivity, P. Miron, F.J. Beron-Vera and M.J. Olascoaga, Preprint, TBD
 - Markov-chain-inspired search for MH370, P. Miron, F. J. Beron-Vera, M. J. Olascoaga and P. Koltai, Preprint, 2020, [link](https://aip.scitation.org/doi/10.1063/1.5092132)
