@@ -54,8 +54,7 @@ class matrix_space:
         self.B = np.asarray(self.B)
         keep = self.B.astype(bool)
 
-        print('%g empty bins out of %g bins. (%1.2f%%)' % (
-            len(self.B) - sum(keep), len(self.B), (len(self.B) - sum(keep)) / len(self.B) * 100))
+        print('Domain contains %g bins. (%g bins were removed)' % (sum(keep), len(self.B)-sum(keep)))
         self.B, self.domain.bins, self.domain.id_og = tools.filter_vector([self.B, self.domain.bins, self.domain.id_og],
                                                                           keep)
         self.N = len(self.domain.bins)

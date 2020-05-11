@@ -11,11 +11,12 @@ class trajectory:
         self.y = y
         self.t = t
         self.ids = ids
+        self.T = None
         self.x0 = None
         self.y0 = None
         self.xt = None
         self.yt = None
-
+    
     @staticmethod
     def monotonic(x):
         """
@@ -93,6 +94,7 @@ class trajectory:
             yt: latitude of each segments at time t0+T
 
         """
+        self.T = T
         oversampling = 1  # times per days
         offset = oversampling * abs(T)
 
@@ -198,7 +200,7 @@ class trajectory:
                     xt[ptr:ptr + length] = x_i[offset:]
                     yt[ptr:ptr + length] = y_i[offset:]
                     ptr += length
-
+        
         x0 = x0[:ptr]
         y0 = y0[:ptr]
         xt = xt[:ptr]
@@ -218,7 +220,7 @@ class trajectory:
 
     def filtering(self, x_range=None, y_range=None, t_range=None, complete_track=True):
         """
-        Filter the trajectory in a spatial or temporal range
+        Returns trajectory in a spatial domain and/or temporal range
         Args:
             x_range: longitudinal range
             y_range: meridional range

@@ -8,4 +8,4 @@ setup(name='pygtm',
       author_email='pmiron@miami.edu',
       license='MIT',
       packages=['pygtm'],
-      zip_safe=False, install_requires=['numpy', 'scipy', 'cartopy', 'scikit-learn', 'matplotlib'])
+      zip_safe=False, install_requires=['numpy', 'scipy', 'cartopy', 'scikit-learn', 'matplotlib', 'netCDF4'])
