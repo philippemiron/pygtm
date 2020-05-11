@@ -28,7 +28,7 @@ class physical_space:
         #        which is needed to initialize a tracer from a list of coordinates
         self.N0 = self.id.size
         self.id_og = np.arange(0, self.N0)
-
+    
     @staticmethod
     def uniform_grid(lon, lat, size):
         """
@@ -138,13 +138,20 @@ class physical_space:
         mat[self.id_og] = vector
         return np.ma.masked_invalid(mat.reshape((self.ny - 1, self.nx - 1)))
 
-    def bins_contours(self, ax):
+    def bins_contours(self, ax, color='k', bin_id=None):
         """
         Plot all element bins on one axis
         Args:
             ax: axis to plot on
+            color: bins contour color
+            bin_id: which bins to plot (default all)
         """
-        for b_i in self.bins:
+        if bin_id is None:
+            bins = self.bins
+        else:
+            bins = self.bins[bin_id]
+        
+        for b_i in bins:
             # corners and width/height of element
             c = (self.coords[b_i[0]][0], self.coords[b_i[0]][1])
             w = self.coords[b_i[1]][0] - self.coords[b_i[0]][0]
@@ -153,9 +160,9 @@ class physical_space:
             if isinstance(ax, GeoAxes):
                 ax.plot([c[0], c[0] + w, c[0] + w, c[0], c[0]],
                         [c[1], c[1], c[1] + h, c[1] + h, c[1]],
-                        'k', linewidth=0.2, zorder=1, transform=ccrs.PlateCarree())
+                        color, linewidth=0.2, zorder=1, transform=ccrs.PlateCarree())
             else:
                 ax.plot([c[0], c[0] + w, c[0] + w, c[0], c[0]],
                         [c[1], c[1], c[1] + h, c[1] + h, c[1]],
-                        'k', linewidth=0.2, zorder=1)
+                        color, linewidth=0.2, zorder=1)
         return
