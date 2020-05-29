@@ -2,13 +2,11 @@ name: example-environment
 channels:
   - conda-forge
 dependencies:
-  - cartopy==0.17
-  - python>=3.6
+  - cartopy
   - numpy
   - scipy
   - matplotlib
   - scikit-learn
-  - matplotlib
   - netCDF4
   - h5py
   - cmocean
