@@ -3,9 +3,10 @@ channels:
   - default
   - conda-forge
 dependencies:
+  - cartopy
+  - python>=3.6
   - numpy
   - scipy
-  - cartopy
   - matplotlib
   - scikit-learn
   - matplotlib
