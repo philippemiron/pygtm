@@ -1,0 +1,14 @@
+name: example-environment
+channels:
+  - default
+  - conda-forge
+dependencies:
+  - numpy
+  - scipy
+  - cartopy
+  - matplotlib
+  - scikit-learn
+  - matplotlib
+  - netCDF4
+  - h5py
+  - cmocean

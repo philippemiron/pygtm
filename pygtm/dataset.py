@@ -16,7 +16,7 @@ class trajectory:
         self.y0 = None
         self.xt = None
         self.yt = None
-    
+
     @staticmethod
     def monotonic(x):
         """
@@ -200,7 +200,7 @@ class trajectory:
                     xt[ptr:ptr + length] = x_i[offset:]
                     yt[ptr:ptr + length] = y_i[offset:]
                     ptr += length
-        
+
         x0 = x0[:ptr]
         y0 = y0[:ptr]
         xt = xt[:ptr]
@@ -273,7 +273,7 @@ class trajectory:
                 segs_i = np.concatenate([pts[:-1], pts[1:]], axis=1)
                 if len(segs_i) > 1:
                     # average per segments
-                    segs_c_i = np.convolve(td, np.repeat(1.0, 2) / 2, 'valid') 
+                    segs_c_i = np.convolve(td, np.repeat(1.0, 2) / 2, 'valid')
                 else:
                     segs_c_i = td
 

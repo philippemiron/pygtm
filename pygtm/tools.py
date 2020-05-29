@@ -3,10 +3,12 @@ import sys
 from datetime import datetime
 import numpy as np
 from pathlib import Path
+from matplotlib import path
 from netCDF4 import Dataset
 from . import physical
 from . import matrix
 from . import dataset
+
 
 def ismember(a, b):
     """
@@ -46,7 +48,178 @@ def filter_vector(vector, keep):
             outlist.append(vec[keep])
         return outlist
 
-def export_nc(filename, data, dom, mat, nirvana_state=False, debug=False):
+
+def filter_mediterranean_sea(data):
+    """
+    Remove segments inside the Mediterranean Sea to prevent artificial connection
+    with the Atlantic Ocean created by bins overlaying both
+    """
+    # rough contour of the Mediterranean Sea
+    xr = [-5.7, -5.4, 3.5, 19.1, 35.3, 37, 23, 11.9, 1.3, -5.6]
+    yr = [36.4, 35, 34, 30.1, 30.7, 37.6, 43.7, 46.9, 43.5, 36]
+    mpath = path.Path(np.vstack((xr, yr)).T)
+    keep = np.where(~mpath.contains_points(np.vstack((data.x0, data.y0)).T))[0]
+    [data.x0, data.y0, data.xt, data.yt] = filter_vector([data.x0, data.y0, data.xt, data.yt], keep)
+
+
+def bins_in_contour(d, xc, yc, return_path=False):
+    """
+    Retrieve bins located inside a contour defined by the lists xc and yc
+    
+    Args:
+        xc: latitude of the contour
+        yc: longitude of the contour
+        d: physical domain object
+    Return:
+        p: path from the (xc, yc) coordinates
+        bins: list of bins inside the contour
+    """
+    p = path.Path(np.vstack((xc, yc)).T)
+    bins_xy = np.where(p.contains_points(d.coords))[0]
+    bins = np.where(np.any(np.in1d(d.bins.reshape(1, -1), bins_xy).reshape(len(d.bins), 4), 1))[0]
+    return (np.unique(bins), p) if return_path else np.unique(bins)
+
+
+def segments_in_contour(data, xc, yc, segments=None):
+    """
+    Retrieve segments located inside a contour defined by the lists xc and yc
+    
+    Args:
+        xc: latitude of the contour
+        yc: longitude of the contour
+        data: dataset object (contains x0, xt, y0, yt)
+        segments ['start', 'end', None]: consider either the start, the end, or both positions of each segments
+    Return:
+        logical arrays len(data.x0)
+    """
+    p = path.Path(np.vstack((xc, yc)).T)
+
+    # considering begining (x0), end (xt) or both
+    if segments == 'start':
+        s_in = p.contains_points(np.vstack((data.x0, data.y0)).T)
+    elif segments == 'end':
+        s_in = p.contains_points(np.vstack((data.xt, data.yt)).T)
+    else:
+        s_in = np.logical_or(p.contains_points(np.vstack((data.x0, data.y0)).T),
+                             p.contains_points(np.vstack((data.xt, data.yt)).T))
+    return s_in
+
+
+def remove_ao_po_communication(d, data):
+    """
+    Remove segments to block artificial flow across central America
+    
+    Args:
+        d: physical domain object
+        data: dataset object (contains x0, xt, y0, yt)
+    """
+    # Pacific section
+    x_po = np.array([-105, -105, -100.5, -85.5, -83, -81, -79.5, -77.5, -75, -70, -105])
+    y_po = np.array([0, 25, 20, 13, 9, 8.25, 9.25, 8.5, 6, 0, 0])
+    bins_po, po = bins_in_contour(d, x_po, y_po, return_path=True)
+
+    # Atlantic section
+    x_ao = np.array([-70, -105, -100.5, -85.5, -83, -81, -79.5, -77.5, -75, -70, -70])
+    y_ao = np.array([25, 25, 20, 13, 9, 8.25, 9.25, 8.5, 6, 0, 25])
+    bins_ao, ao = bins_in_contour(d, x_ao, y_ao, return_path=True)
+
+    # get unique and the intersection of both region
+    bins_inter = np.intersect1d(bins_po, bins_ao)
+
+    # identify the segments from the data object that are in both region
+    s_po = segments_in_contour(data, x_po, y_po)
+    s_ao = segments_in_contour(data, x_ao, y_ao)
+
+    # for each bin we calculate how much segments are in AO and PO
+    remove = np.empty(0)
+
+    bins_xy0 = d.find_element(data.x0, data.y0)
+    bins_xyt = d.find_element(data.xt, data.yt)
+
+    for b_i in bins_inter:
+        s_poi = np.logical_and(np.logical_or(bins_xy0 == b_i, bins_xyt == b_i), s_po)
+        s_aoi = np.logical_and(np.logical_or(bins_xy0 == b_i, bins_xyt == b_i), s_ao)
+
+        if np.sum(s_poi) < np.sum(s_aoi):
+            remove = np.append(remove, np.arange(len(data.x0))[s_poi])
+        else:
+            remove = np.append(remove, np.arange(len(data.x0))[s_aoi])
+
+    # remove once at the end
+    keep = np.setdiff1d(np.arange(0, len(data.x0)), remove)
+    [data.x0, data.y0, data.xt, data.yt] = filter_vector([data.x0, data.y0, data.xt, data.yt], keep)
+
+
+def restrict_to_subregion(data, tm, region):
+    """Extract a subregion from the global transition matrix
+    
+    Args:
+        data: dataset object (contains x0, xt, y0, yt)
+        tm: transition matrix object
+        region: ['Atlantic Ocean', 'Atlantic Ocean extended', 'Pacific Ocean', 'Indian Ocean']
+    """
+    if region == "Atlantic Ocean":
+        xr = np.array([-104, -104, -98, -84.99, -83.19, -81.06, -79.36, -77.55, -60, -72, -72, 22, 22, -104])
+        yr = np.array([90, 25.5, 18, 13.4, 9.16, 8.23, 9.35, 8.31, -10.5, -54, -90, -90, 90, 90])
+        xyr = [[xr, yr]]
+    elif region == 'Atlantic Ocean extended':
+        xr = np.array([-104, -104, -98, -84.99, -83.19, -81.06, -79.36, -77.55, -60, -72, -72, 51, 51, -104])
+        yr = np.array([90, 25.5, 18, 13.4, 9.16, 8.23, 9.35, 8.31, -10.5, -54, -90, -90, 90, 90])
+        xyr = [[xr, yr]]
+    elif region == 'Pacific Ocean':
+        xr = np.array([-104, -104, -98, -84.99, -83.19, -81.06, -79.36, -77.55, -60, -72, -72, -180, -180, -104])
+        yr = np.array([90, 25.5, 18, 13.4, 9.16, 8.23, 9.35, 8.31, -10.5, -54, -90, -90, 90, 90])
+        xr2 = np.array([98, 98, 102.4, 108.8, 125.7, 125.7, 135, 135, 180.1, 180.1, 98])
+        yr2 = np.array([90, 26, -0.7, -7.21, -8.7, -23, -23, -90, -90, 90, 90])
+        xyr = [[xr, yr], [xr2, yr2]]
+    elif region == 'Indian Ocean':
+        xr = np.array([98, 102.4, 108.8, 125.7, 125.7, 135, 135, 22, 22, 26, 98])
+        yr = np.array([26, -0.7, -7.21, -8.7, -23, -23, -90, -90, -20, 31, 26])
+        xyr = [[xr, yr]]
+    else:
+        print(
+            'Available regions are: [\'Atlantic Ocean\', \'Atlantic Ocean extended\', \'Pacific Ocean\', \'Indian Ocean\']')
+        return
+
+    d = tm.domain
+    # search bins inside region
+    ids = np.empty(0, dtype='int')
+    s = np.zeros_like(data.x0, dtype='bool')
+    for xy in xyr:
+        ids = np.append(ids, bins_in_contour(d, xy[0], xy[1]))
+        s = np.logical_or(s, segments_in_contour(data, xy[0], xy[1]))
+    ids = np.unique(ids)
+
+    # remove bin ids with 0 data point in the region
+    # important for Panama region where points might be only
+    # in Atlantic/Pacific for certain bins
+    bins = d.find_element(data.x0[s], data.y0[s])
+    points_per_bin = np.bincount(bins[bins > -1])
+    empty_bins = ismember(np.where(points_per_bin == 0)[0], ids)
+    ids = np.delete(ids, empty_bins[empty_bins > -1])
+
+    # fi is defined has everything coming from P⊄Region
+    o_ids = np.setdiff1d(np.arange(0, len(tm.P)), ids)
+    tm.fi = np.sum(tm.P[np.ix_(o_ids, ids)], 0)
+    if np.sum(tm.fi) > 0:
+        tm.fi = tm.fi / np.sum(tm.fi)
+    else:
+        tm.fi = np.zeros(len(ids))
+
+    # restrict to the ids inside the region
+    d = tm.domain
+    tm.N = len(ids)
+    tm.P = tm.P[np.ix_(ids, ids)]
+    tm.M = tm.M[ids]
+    tm.B = tm.B[ids]
+    d.bins = d.bins[ids, :]
+    d.id_og = d.id_og[ids]
+    tm.fo = 1 - np.sum(tm.P, 1)
+    tm.largest_connected_components()
+    tm.left_and_right_eigenvectors()
+
+
+def export_nc(filename, data, mat, nirvana_state=False, debug=False):
     """
     Output calculation to netCDF file
     
@@ -67,6 +240,7 @@ def export_nc(filename, data, dom, mat, nirvana_state=False, debug=False):
     yt = data.yt
 
     # variables related to physical domain
+    dom = mat.domain
     N0 = dom.N0
     bins = dom.bins
     id = dom.id
@@ -101,9 +275,9 @@ def export_nc(filename, data, dom, mat, nirvana_state=False, debug=False):
     f = Dataset(filename, 'w', format='NETCDF4')
     f.history = "Created " + datetime.today().strftime("%d/%m/%y")
     f.description = "Transition matrix from pygtm"
-    #f.set_always_mask(False) # don't use masked_array by default
+    # f.set_always_mask(False) # don't use masked_array by default
     f.createDimension('N', N)
-    f.createDimension('N+1', N+1)
+    f.createDimension('N+1', N + 1)
     f.createDimension('N0', N0)
     f.createDimension('nx', nx)
     f.createDimension('ny', ny)
@@ -166,7 +340,7 @@ def export_nc(filename, data, dom, mat, nirvana_state=False, debug=False):
     L_ = f.createVariable('L', 'd', ('N', 'nbEigenvalues'))
     R_ = f.createVariable('R', 'd', ('N', 'nbEigenvalues'))
 
-     # one more state in P in the presence of a Nirvana state
+    # one more state in P in the presence of a Nirvana state
     if nirvana_state:
         P_ = f.createVariable('P', P.dtype, ('N+1', 'N+1'))
     else:
@@ -191,7 +365,7 @@ def export_nc(filename, data, dom, mat, nirvana_state=False, debug=False):
     Bv_[:] = Bv
     fi_[:] = fi
     fo_[:] = fo
-    
+
     bins_[:] = bins
     id_[:] = id
     coords_[:] = coords
@@ -218,13 +392,14 @@ def export_nc(filename, data, dom, mat, nirvana_state=False, debug=False):
     coords_.units = 'coordinates degrees'
     T_.units = 'days'
     f.close()
-    
+
     # plot description for validation
     if debug:
         filename = os.path.expanduser(filename)
         f = Dataset(filename, 'r')
         print(f.variables)
         f.close()
+
 
 def import_nc(filename):
     """
@@ -240,7 +415,7 @@ def import_nc(filename):
     # open file
     filename = os.path.expanduser(filename)
     f = Dataset(filename, 'r')
-    f.set_always_mask(False) # don't return all variable as np.ma
+    f.set_always_mask(False)  # don't return all variable as np.ma
 
     # basic domain params
     lon = [float(f['lonmin'][...]), float(f['lonmax'][...])]

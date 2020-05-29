@@ -54,7 +54,7 @@ class matrix_space:
         self.B = np.asarray(self.B)
         keep = self.B.astype(bool)
 
-        print('Domain contains %g bins. (%g bins were removed)' % (sum(keep), len(self.B)-sum(keep)))
+        print('Domain contains %g bins. (%g bins were removed)' % (sum(keep), len(self.B) - sum(keep)))
         self.B, self.domain.bins, self.domain.id_og = tools.filter_vector([self.B, self.domain.bins, self.domain.id_og],
                                                                           keep)
         self.N = len(self.domain.bins)
@@ -121,11 +121,29 @@ class matrix_space:
         # where particles are coming out
         self.fo = 1 - np.sum(self.P, 1)
 
-        # calculate the connected components
+    def largest_connected_components(self):
+        """
+        Restrict the matrix to the strongly connected components
+        """
+        # a set of nodes is consider strongly connected if there 
+        # is a connection between each pair of nodes in the set
         _, self.ccs = connected_components(self.P, directed=True, connection='strong')
         _, components_count = np.unique(self.ccs, return_counts=True)
         self.largest_cc = np.where(self.ccs == np.argmax(components_count))[0]
-        return
+
+        d = self.domain
+        lcc = self.largest_cc
+        self.N = len(lcc)
+        self.P = self.P[np.ix_(lcc, lcc)]
+        self.M = self.M[lcc]
+        self.B = self.B[lcc]
+        d.bins = d.bins[lcc, :]
+        d.id_og = d.id_og[lcc]
+        if np.sum(self.fi[lcc] > 0):
+            self.fi = self.fi[lcc] / np.sum(self.fi[lcc])
+        else:
+            self.fi = np.zeros(self.N)
+        self.fo = 1 - np.sum(self.P, 1)
 
     @staticmethod
     def eigenvectors(m, n):

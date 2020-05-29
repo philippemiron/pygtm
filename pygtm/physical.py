@@ -28,7 +28,7 @@ class physical_space:
         #        which is needed to initialize a tracer from a list of coordinates
         self.N0 = self.id.size
         self.id_og = np.arange(0, self.N0)
-    
+
     @staticmethod
     def uniform_grid(lon, lat, size):
         """
@@ -150,7 +150,7 @@ class physical_space:
             bins = self.bins
         else:
             bins = self.bins[bin_id]
-        
+
         for b_i in bins:
             # corners and width/height of element
             c = (self.coords[b_i[0]][0], self.coords[b_i[0]][1])
