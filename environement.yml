@@ -1,6 +1,5 @@
 name: example-environment
 channels:
-  - default
   - conda-forge
 dependencies:
   - cartopy
