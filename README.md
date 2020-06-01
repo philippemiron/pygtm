@@ -15,4 +15,3 @@
 - Lagrangian geography of the deep Gulf of Mexico, P. Miron, F. J. Beron-Vera, M. J. Olascoaga and G. Froyland, Journal of Physical Oceanography, 2018, [link](https://journals.ametsoc.org/doi/10.1175/JPO-D-18-0073.1)
 - Connectivity of Pulley Ridge with remote locations as inferred from satellite-tracked drifter trajectories, M. J. Olascoaga, P. Miron, C. Paris, P. Pérez-Brunius, R. Pérez-Portela, R. H. Smith and A. Vaz, Journal of Geophysical Research,, 2018, [link](https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2018JC014057)
 - Lagrangian dynamical geography of the Gulf of Mexico, P. Miron, F. J. Beron-Vera, M. J. Olascoaga, P. Pérez-Brunius, J. Sheinbaum and G. Froyland, Scientific Reports, 2017, [link](https://www.nature.com/articles/s41598-017-07177-w)
-
