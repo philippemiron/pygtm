@@ -1,6 +1,7 @@
 # pygtm
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/philippemiron/pygtm/master?filepath=examples%2F)
+[![HitCount](http://hits.dwyl.com/philippemiron/pygtm.svg)](http://hits.dwyl.com/philippemiron/pygtm)
 
 ## A python geospatial transition matrix toolbox.
 
