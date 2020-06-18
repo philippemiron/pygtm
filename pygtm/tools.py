@@ -190,9 +190,9 @@ def restrict_to_subregion(data, tm, region):
         s = np.logical_or(s, segments_in_contour(data, xy[0], xy[1]))
     ids = np.unique(ids)
 
-    # remove bin ids with 0 data point in the region
-    # important for Panama region where points might be only
-    # in Atlantic/Pacific for certain bins
+    # Remove the bins with 0 data point in the region from the list of bin indices (ids)
+    # which is important for Panama region where points 
+    # inside a bin might only be in another region
     bins = d.find_element(data.x0[s], data.y0[s])
     points_per_bin = np.bincount(bins[bins > -1])
     empty_bins = ismember(np.where(points_per_bin == 0)[0], ids)

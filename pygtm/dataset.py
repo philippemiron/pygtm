@@ -239,6 +239,9 @@ class trajectory:
             y_range = [np.min(self.y), np.max(self.y)]
         if t_range is None:
             t_range = [np.min(self.t), np.max(self.t)]
+        if x_range[0] > x_range[1]: x_range = x_range[::-1]
+        if y_range[0] > y_range[1]: y_range = y_range[::-1]
+        if t_range[0] > t_range[1]: t_range = t_range[::-1]
 
         # identified drifters change
         I = np.where(abs(np.diff(self.ids, axis=0)) > 0)[0]
