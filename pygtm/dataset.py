@@ -222,9 +222,9 @@ class trajectory:
         """
         Returns trajectory in a spatial domain and/or temporal range
         Args:
-            x_range: longitudinal range
-            y_range: meridional range
-            t_range: temporal range
+            x_range: longitudinal range (ascending order)
+            y_range: meridional range (ascending order)
+            t_range: temporal range (ascending order)
             complete_track: True: full trajectories is plotted
                             False: trajectories is plotted after it reaches the region
 
@@ -239,10 +239,7 @@ class trajectory:
             y_range = [np.min(self.y), np.max(self.y)]
         if t_range is None:
             t_range = [np.min(self.t), np.max(self.t)]
-        if x_range[0] > x_range[1]: x_range = x_range[::-1]
-        if y_range[0] > y_range[1]: y_range = y_range[::-1]
-        if t_range[0] > t_range[1]: t_range = t_range[::-1]
-
+            
         # identified drifters change
         I = np.where(abs(np.diff(self.ids, axis=0)) > 0)[0]
         I = np.insert(I, [0, len(I)], [-1, len(self.ids) - 1])
