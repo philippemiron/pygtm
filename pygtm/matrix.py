@@ -1,5 +1,6 @@
 from pygtm import tools
 import numpy as np
+import scipy as sc
 import scipy.linalg as sla
 import scipy.sparse.linalg as ssla
 from sklearn.preprocessing import maxabs_scale
@@ -125,7 +126,7 @@ class matrix_space:
         """
         Restrict the matrix to the strongly connected components
         """
-        # a set of nodes is consider strongly connected if there 
+        # a set of nodes is consider strongly connected if there
         # is a connection between each pair of nodes in the set
         _, self.ccs = connected_components(self.P, directed=True, connection='strong')
         _, components_count = np.unique(self.ccs, return_counts=True)
@@ -242,3 +243,32 @@ class matrix_space:
             else:
                 graph[key] = [nnz[1][i]]
         return graph
+
+    def residence_time(target):
+        """
+        Calculate residence time from P matrix and a subset element list
+        Args:
+            target: bin indices in the zone of interest
+        Returns:
+            array [N]: residence time
+        """
+        c = np.zeros(self.N)
+        a = sc.sparse.eye(len(target)) - self.P[np.ix_(target, target)]
+        b = np.ones(len(a))
+        # naturally, outside of the target the residence time is zero
+        c[target] = sla.lstsq(a, b)[0]
+
+        return c
+
+    def hitting_time(target):
+        '''
+        Calculate hitting time from P matrix and a subset element list
+        Args:
+            target: bin indices in the zone to hit
+        Returns:
+            array [N]: hitting time
+        '''
+        #  The hitting time of set A is equal to the residence time
+        # of set B with the intersection of A and B the full domain
+        diff_target = np.setdiff1d(np.arange(0, len(P)), target)
+        return residence_time(diff_target)
