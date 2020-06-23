@@ -244,7 +244,7 @@ class matrix_space:
                 graph[key] = [nnz[1][i]]
         return graph
 
-    def residence_time(target):
+    def residence_time(self, target):
         """
         Calculate residence time from P matrix and a subset element list
         Args:
@@ -260,7 +260,7 @@ class matrix_space:
 
         return c
 
-    def hitting_time(target):
+    def hitting_time(self, target):
         '''
         Calculate hitting time from P matrix and a subset element list
         Args:
