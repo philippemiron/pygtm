@@ -49,23 +49,10 @@ def filter_vector(vector, keep):
         return outlist
 
 
-def filter_mediterranean_sea(data):
-    """
-    Remove segments inside the Mediterranean Sea to prevent artificial connection
-    with the Atlantic Ocean created by bins overlaying both
-    """
-    # rough contour of the Mediterranean Sea
-    xr = [-5.7, -5.4, 3.5, 19.1, 35.3, 37, 23, 11.9, 1.3, -5.6]
-    yr = [36.4, 35, 34, 30.1, 30.7, 37.6, 43.7, 46.9, 43.5, 36]
-    mpath = path.Path(np.vstack((xr, yr)).T)
-    keep = np.where(~mpath.contains_points(np.vstack((data.x0, data.y0)).T))[0]
-    [data.x0, data.y0, data.xt, data.yt] = filter_vector([data.x0, data.y0, data.xt, data.yt], keep)
-
-
 def bins_in_contour(d, xc, yc, return_path=False):
     """
     Retrieve bins located inside a contour defined by the lists xc and yc
-    
+
     Args:
         xc: latitude of the contour
         yc: longitude of the contour
@@ -82,8 +69,8 @@ def bins_in_contour(d, xc, yc, return_path=False):
 
 def segments_in_contour(data, xc, yc, segments=None):
     """
-    Retrieve segments located inside a contour defined by the lists xc and yc
-    
+    Retrieve trajectory segments located inside a contour defined by (xc, yc)
+
     Args:
         xc: latitude of the contour
         yc: longitude of the contour
@@ -105,10 +92,24 @@ def segments_in_contour(data, xc, yc, segments=None):
     return s_in
 
 
+def filter_mediterranean_sea(data):
+    """
+    Remove segments inside the Mediterranean Sea to prevent artificial connection
+    with the Atlantic Ocean created by bins overlaying both
+    """
+    # rough contour of the Mediterranean Sea
+    xr = [-5.7, -5.4, 3.5, 19.1, 35.3, 37, 23, 11.9, 1.3, -5.6]
+    yr = [36.4, 35, 34, 30.1, 30.7, 37.6, 43.7, 46.9, 43.5, 36]
+    mpath = path.Path(np.vstack((xr, yr)).T)
+    keep = np.where(~mpath.contains_points(np.vstack((data.x0, data.y0)).T))[0]
+    [data.x0, data.y0, data.xt, data.yt] = filter_vector([data.x0, data.y0, data.xt, data.yt], keep)
+
+
 def remove_ao_po_communication(d, data):
     """
-    Remove segments to block artificial flow across central America
-    
+    Remove the connection between the Atlantic Ocean (AO) and Pacific Ocean (PO)
+    by removing trajectory segments to block the artificial flow across central America
+
     Args:
         d: physical domain object
         data: dataset object (contains x0, xt, y0, yt)
@@ -152,7 +153,7 @@ def remove_ao_po_communication(d, data):
 
 def restrict_to_subregion(data, tm, region):
     """Extract a subregion from the global transition matrix
-    
+
     Args:
         data: dataset object (contains x0, xt, y0, yt)
         tm: transition matrix object
@@ -191,7 +192,7 @@ def restrict_to_subregion(data, tm, region):
     ids = np.unique(ids)
 
     # Remove the bins with 0 data point in the region from the list of bin indices (ids)
-    # which is important for Panama region where points 
+    # which is important for Panama region where points
     # inside a bin might only be in another region
     bins = d.find_element(data.x0[s], data.y0[s])
     points_per_bin = np.bincount(bins[bins > -1])
@@ -222,7 +223,7 @@ def restrict_to_subregion(data, tm, region):
 def export_nc(filename, data, mat, nirvana_state=False, debug=False):
     """
     Output calculation to netCDF file
-    
+
     Args:
         filename: netCDF output file
         data: trajectory's object
@@ -449,7 +450,7 @@ def import_nc(filename):
     mat.fi = f['fi'][...]
     mat.fo = f['fo'][...]
 
-    # reconstruct B 2d list from Bv (vector) with M    
+    # reconstruct B 2d list from Bv (vector) with M
     mat.B = []
     Bv = f['Bv'][...]
     j = 0
