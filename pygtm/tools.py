@@ -92,64 +92,90 @@ def segments_in_contour(data, xc, yc, segments=None):
     return s_in
 
 
-def filter_mediterranean_sea(data):
+def filter_region(data, xc, yc):
     """
-    Remove segments inside the Mediterranean Sea to prevent artificial connection
-    with the Atlantic Ocean created by bins overlaying both
+    Remove segments inside a region defined by the contour coordinates (x,y)
+    Args:
+        xc: latitude of the contour
+        yc: longitude of the contour
+        data: dataset object (contains x0, xt, y0, yt)
+        segments ['start', 'end', None]: consider either the start, the end, or both positions of each segments
+    Return:
+        logical arrays len(data.x0)
     """
-    # rough contour of the Mediterranean Sea
-    xr = [-5.7, -5.4, 3.5, 19.1, 35.3, 37, 23, 11.9, 1.3, -5.6]
-    yr = [36.4, 35, 34, 30.1, 30.7, 37.6, 43.7, 46.9, 43.5, 36]
-    mpath = path.Path(np.vstack((xr, yr)).T)
-    keep = np.where(~mpath.contains_points(np.vstack((data.x0, data.y0)).T))[0]
+    rpath = path.Path(np.vstack((xc, yc)).T)
+    keep = np.where(~rpath.contains_points(np.vstack((data.x0, data.y0)).T))[0]
     [data.x0, data.y0, data.xt, data.yt] = filter_vector([data.x0, data.y0, data.xt, data.yt], keep)
+    
 
-
-def remove_ao_po_communication(d, data):
+def remove_communication(d, data, x1, y1, x2, y2):
     """
-    Remove the connection between the Atlantic Ocean (AO) and Pacific Ocean (PO)
-    by removing trajectory segments to block the artificial flow across central America
+    Remove the connection between two regions defined by (x1, y1) and (x2, y2)
+    The two regions have to share a common edge, e.g. two regions: Atlantic and 
+    Pacific oceans with a common intersection at the Isthmus of Panama
 
     Args:
         d: physical domain object
         data: dataset object (contains x0, xt, y0, yt)
+        (x1, y1): close contour defining first region
+        (x2, y2): close contour defining second region
     """
-    # Pacific section
-    x_po = np.array([-105, -105, -100.5, -85.5, -83, -81, -79.5, -77.5, -75, -70, -105])
-    y_po = np.array([0, 25, 20, 13, 9, 8.25, 9.25, 8.5, 6, 0, 0])
-    bins_po, po = bins_in_contour(d, x_po, y_po, return_path=True)
-
-    # Atlantic section
-    x_ao = np.array([-70, -105, -100.5, -85.5, -83, -81, -79.5, -77.5, -75, -70, -70])
-    y_ao = np.array([25, 25, 20, 13, 9, 8.25, 9.25, 8.5, 6, 0, 25])
-    bins_ao, ao = bins_in_contour(d, x_ao, y_ao, return_path=True)
+    # bins first and second region
+    bins_r1 = bins_in_contour(d, x1, y1)
+    bins_r2 = bins_in_contour(d, x2, y2)
 
     # get unique and the intersection of both region
-    bins_inter = np.intersect1d(bins_po, bins_ao)
+    bins_inter = np.intersect1d(bins_r1, bins_r2)
 
     # identify the segments from the data object that are in both region
-    s_po = segments_in_contour(data, x_po, y_po)
-    s_ao = segments_in_contour(data, x_ao, y_ao)
+    s1 = segments_in_contour(data, x1, y1)
+    s2 = segments_in_contour(data, x2, y2)
 
-    # for each bin we calculate how much segments are in AO and PO
+    # for each bin we calculate how much segments are in r1 and r2
     remove = np.empty(0)
 
     bins_xy0 = d.find_element(data.x0, data.y0)
     bins_xyt = d.find_element(data.xt, data.yt)
 
     for b_i in bins_inter:
-        s_poi = np.logical_and(np.logical_or(bins_xy0 == b_i, bins_xyt == b_i), s_po)
-        s_aoi = np.logical_and(np.logical_or(bins_xy0 == b_i, bins_xyt == b_i), s_ao)
+        s1i = np.logical_and(np.logical_or(bins_xy0 == b_i, bins_xyt == b_i), s1)
+        s2i = np.logical_and(np.logical_or(bins_xy0 == b_i, bins_xyt == b_i), s2)
 
-        if np.sum(s_poi) < np.sum(s_aoi):
-            remove = np.append(remove, np.arange(len(data.x0))[s_poi])
+        if np.sum(s1i) < np.sum(s2i):
+            remove = np.append(remove, np.arange(len(data.x0))[s1i])
         else:
-            remove = np.append(remove, np.arange(len(data.x0))[s_aoi])
+            remove = np.append(remove, np.arange(len(data.x0))[s2i])
 
     # remove once at the end
     keep = np.setdiff1d(np.arange(0, len(data.x0)), remove)
     [data.x0, data.y0, data.xt, data.yt] = filter_vector([data.x0, data.y0, data.xt, data.yt], keep)
+    
+    
+def remove_panama_communication(d, data):
+    """
+    Function that call remove_communication_two_regions for a specific case
+    with predefined region boundaries
+    """
+    # Isthmus of Panama
+    x_po = np.array([-105, -105, -100.5, -85.5, -83, -81, -79.5, -77.5, -75, -70, -105])
+    y_po = np.array([0, 25, 20, 13, 9, 8.25, 9.25, 8.5, 6, 0, 0])
+    x_ao = np.array([-70, -105, -100.5, -85.5, -83, -81, -79.5, -77.5, -75, -70, -70])
+    y_ao = np.array([25, 25, 20, 13, 9, 8.25, 9.25, 8.5, 6, 0, 25])
+    remove_communication(d, data, x_po, y_po, x_ao, y_ao)
 
+    
+def remove_indonesia_communication(d, data):
+    """
+    Function that call remove_communication_two_regions for a specific case
+    with predefined region boundaries
+    """
+    # Maritime continent
+    x_io = np.array([99, 99, 98.8, 102, 103.5, 103.5, 107.5, 114, 120, 127, 138, 138, 99])
+    y_io = np.array([25, 11.5, 8.8, 4.3, 2, -3, -7, -8.2, -8.6, -8.45, -8.3, 25, 25])
+    x_po = np.array([99, 99, 98.8, 102, 103.5, 103.5, 107.5, 114, 120, 127, 138, 138, 95, 95, 99])
+    y_po = np.array([25, 11.5, 8.8, 4.3, 2, -3, -7, -8.2, -8.6, -8.45, -8.3, -22, -22, 25, 25])
+    remove_communication(d, data, x_io, y_io, x_po, y_po)
+    
 
 def restrict_to_subregion(data, tm, region):
     """Extract a subregion from the global transition matrix
