@@ -269,6 +269,6 @@ class matrix_space:
             array [N]: hitting time
         '''
         #  The hitting time of set A is equal to the residence time
-        # of set B with the intersection of A and B the full domain
+        # of set B, with B set as the completent of set A
         diff_target = np.setdiff1d(np.arange(0, len(P)), target)
         return residence_time(diff_target)

@@ -218,7 +218,8 @@ class trajectory:
             self.xt = x0
             self.yt = y0
 
-    def filtering(self, x_range=None, y_range=None, t_range=None, complete_track=True):
+
+    def filtering(d, x_range=None, y_range=None, t_range=None, complete_track=True):
         """
         Returns trajectory in a spatial domain and/or temporal range
         Args:
@@ -234,32 +235,31 @@ class trajectory:
                      ex: trajectory 0 contains the segments[segs_id[0]:segs_id[0+1]]
         """
         if x_range is None:
-            x_range = [np.min(self.x), np.max(self.x)]
+            x_range = [np.min(data.x), np.max(data.x)]
         if y_range is None:
-            y_range = [np.min(self.y), np.max(self.y)]
+            y_range = [np.min(data.y), np.max(data.y)]
         if t_range is None:
-            t_range = [np.min(self.t), np.max(self.t)]
+            t_range = [np.min(data.t), np.max(data.t)]
             
         # identified drifters change
-        I = np.where(abs(np.diff(self.ids, axis=0)) > 0)[0]
-        I = np.insert(I, [0, len(I)], [-1, len(self.ids) - 1])
+        I = np.where(abs(np.diff(data.ids, axis=0)) > 0)[0]
+        I = np.insert(I, [0, len(I)], [-1, len(data.ids) - 1])
 
         segs = np.empty((0, 2, 2))
-        segs_c = np.empty(0)
+        segs_t = np.empty(0)
         segs_ind = np.zeros((0, 2), dtype='int')
         cc = 0
         for j in range(0, len(I) - 1):
-            xd = self.x[I[j] + 1:I[j + 1] + 1]
-            yd = self.y[I[j] + 1:I[j + 1] + 1]
-            td = self.t[I[j] + 1:I[j + 1] + 1]
+            xd = data.x[I[j] + 1:I[j + 1] + 1]
+            yd = data.y[I[j] + 1:I[j + 1] + 1]
+            td = data.t[I[j] + 1:I[j + 1] + 1]
 
             # keep trajectory inside the specific domain and time frame
             keep = np.logical_and.reduce(
                 (xd > x_range[0], xd < x_range[1], yd > y_range[0], yd < y_range[1], td > t_range[0], td < t_range[1])
             )
 
-            if np.any(keep):
-                cc += 1
+            if np.sum(keep)>1:
                 # if complete_track: full trajectories is plotted
                 # else: only after reaching the region
                 if not complete_track:
@@ -267,20 +267,28 @@ class trajectory:
                     xd = xd[reach:]
                     yd = yd[reach:]
                     td = td[reach:]
+                
+                # search for trajectories crossing the ±180
+                cross_world = np.where(np.diff(np.sign(xd)))[0]
+                cross_world = np.unique(np.insert(cross_world, [0, len(cross_world)], [-1, len(xd) - 1]))
+                for k in range(0, len(cross_world) - 1):
+                    ind = np.arange(cross_world[k] + 1, cross_world[k + 1] + 1)
+                    
+                    # change array format for LineCollection
+                    pts = np.array([xd[ind], yd[ind]]).T.reshape(-1, 1, 2)
+                    segs_i = np.concatenate([pts[:-1], pts[1:]], axis=1)
 
-                # change array format for LineCollection
-                pts = np.array([xd, yd]).T.reshape(-1, 1, 2)
-                segs_i = np.concatenate([pts[:-1], pts[1:]], axis=1)
-                if len(segs_i) > 1:
-                    # average per segments
-                    segs_c_i = np.convolve(td, np.repeat(1.0, 2) / 2, 'valid')
-                else:
-                    segs_c_i = td
+                    if len(segs_i) > 1:
+                        segs_t_i = np.convolve(td, np.repeat(1.0, 2) / 2, 'valid') # average per segment
+                    else:
+                        segs_t_i = td
 
-                # combine to the global segments list
-                segs = np.concatenate((segs, segs_i), axis=0)
-                segs_c = np.concatenate((segs_c, segs_c_i), axis=0)
-                segs_ind = np.vstack((segs_ind, np.array([I[j] + 1, I[j + 1]])))
+                    # combine to the global segments list
+                    segs = np.concatenate((segs, segs_i), axis=0)
+                    segs_t = np.concatenate((segs_t, segs_t_i), axis=0)
+                    segs_ind = np.vstack((segs_ind, np.array([I[ind[0]], I[ind[-1]]])))
+                    #segs_ind = np.vstack((segs_ind, np.array([I[j] + 1, I[j + 1]])))
+                    
         segments = LineCollection(segs, linewidths=0.25)
-        segments.set_array(segs_c)
+        segments.set_array(segs_t)
         return segments, segs_ind

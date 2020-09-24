@@ -9,7 +9,7 @@
 
 ### Used in the following scientific publications
 
-- Reactive routes of floating marine debris, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, M.S. Lozier, L. Helfmann and P. Koltai, Preprint, TBD, 2020
+- Transition paths of plastic debris in the global surface ocean, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, M.S. Lozier, L. Helfmann and P. Koltai, Preprint, TBD, 2020
 - How local winds and currents impact the trajectories of floating matter: Inertia-dependent clustering of paths, P. Miron, M.J. Olascoaga, F.J. Beron-Vera, N.F. Putman, J. Triñanes, R. Lumpkin and G.J. Goni, Preprint, 2020
 - Unveiling North Atlantic Deep Water pathways using nonlinear dynamics techniques, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, M.S. Lozier, L. Helfmann and P. Koltai, Preprint, TBD
 - Influence of the Loop Current of the Gulf of Mexico connectivity, P. Miron, F.J. Beron-Vera and M.J. Olascoaga, Preprint, TBD

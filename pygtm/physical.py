@@ -134,6 +134,10 @@ class physical_space:
         Args:
             vector:  Numpy array or list of Numpy array
         """
+        # we remove nirvana state if present
+        if len(vector) == len(self.bins) + 1:
+            vector = vector[:-1]
+        
         mat = np.full((self.nx - 1) * (self.ny - 1), np.nan)
         mat[self.id_og] = vector
         return np.ma.masked_invalid(mat.reshape((self.ny - 1, self.nx - 1)))
