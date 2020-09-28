@@ -9,7 +9,6 @@
 
 ### Used in the following Publications
 - Transition paths of marine debris and the stability of the garbage patches, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, M.S. Lozier, L. Helfmann and P. Koltai, Preprint, TBD, 2020
-- How local winds and currents impact the trajectories of floating matter: Inertia-dependent clustering of paths, P. Miron, M.J. Olascoaga, F.J. Beron-Vera, N.F. Putman, J. Triñanes, R. Lumpkin and G.J. Goni, Preprint, 2020
 - Unveiling North Atlantic Deep Water pathways using nonlinear dynamics techniques, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, M.S. Lozier, L. Helfmann and P. Koltai, Preprint, TBD
 - Influence of the Loop Current of the Gulf of Mexico connectivity, P. Miron, F.J. Beron-Vera and M.J. Olascoaga, Preprint, TBD
 - Markov-chain-inspired search for MH370, P. Miron, F. J. Beron-Vera, M. J. Olascoaga and P. Koltai, Preprint, 2020, [link](https://aip.scitation.org/doi/10.1063/1.5092132)
