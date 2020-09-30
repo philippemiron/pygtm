@@ -18,4 +18,5 @@
 
 ### Contributors
 - Philippe Miron
-- Luzie Helfmann *pygtm/tpt.py* is based on this [repo](https://github.com/LuzieH/pytpt).
+- Luzie Helfmann
+  - *pygtm/tpt.py* is based on this [repo](https://github.com/LuzieH/pytpt).
