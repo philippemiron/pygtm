@@ -123,7 +123,6 @@ class physical_space:
         el_list[keep] = self.id[id_i, id_j]
 
         # finally update the number to account for removed elements
-        # have to look at the P construction if I include this here
         el_list = tools.ismember(el_list, self.id_og)
         return el_list
 
