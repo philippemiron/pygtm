@@ -3,5 +3,8 @@ python:
   - "3.7"
   - "3.8"
 
+install:
+  - pip install -r cartopy==0.17 numpy scipy matplotlib scikit-learn netCDF4 h5py cmocean
+  
 script:
   - pytest
