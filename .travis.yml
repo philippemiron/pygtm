@@ -10,7 +10,7 @@ before_install:
   - conda config --set always_yes yes --set changeps1 no --set show_channel_urls true
   - conda update conda --quiet
   - conda config --add channels conda-forge
-  - conda init bash
+  - source $(conda info --root)/etc/profile.d/conda.sh
 
 install:
   - conda env create --file=environment.yml
