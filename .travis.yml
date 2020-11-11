@@ -6,7 +6,7 @@ before_install:
   - "export PYTHONPATH=$PYTHONPATH:$(pwd)"
 
 install:
-  - pip install numpy scipy scikit-learn matplotlib h5py netCDF4 cartopy
+  - pip install numpy scipy scikit-learn matplotlib h5py netCDF4 cartopy==0.17 cmocean
 
 script:
   - pytest tests/*
