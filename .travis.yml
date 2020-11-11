@@ -17,4 +17,4 @@ install:
   - conda activate pygtm-env
 
 script:
-  - $HOME/miniconda3/bin/pytest tests/*
+  - pytest tests/*
