@@ -1,4 +1,4 @@
-# pygtm : a python Geospatial Transition Matrix toolbox.
+# pygtm : a python Geospatial Transition Matrix toolbox
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/philippemiron/pygtm/main?filepath=examples%2F)
 [![HitCount](http://hits.dwyl.com/philippemiron/pygtm.svg)](http://hits.dwyl.com/philippemiron/pygtm)
