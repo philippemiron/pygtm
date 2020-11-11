@@ -4,9 +4,8 @@ import scipy as sc
 import scipy.linalg as sla
 import scipy.sparse.linalg as ssla
 from sklearn.preprocessing import maxabs_scale
-from scipy.sparse.csgraph import connected_components, shortest_path
+from scipy.sparse.csgraph import connected_components
 from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
 
 
 class matrix_space:

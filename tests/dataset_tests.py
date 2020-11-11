@@ -6,4 +6,4 @@ from pygtm.dataset import trajectory
 if __name__ == '__main__':
     unittest.main()
 
-#class dataset_tests(TestCase):
+# class dataset_tests(TestCase):

@@ -135,7 +135,7 @@ class physical_space:
         # we remove nirvana state if present
         if len(vector) == len(self.bins) + 1:
             vector = vector[:-1]
-        
+
         mat = np.full((self.nx - 1) * (self.ny - 1), np.nan)
         mat[self.id_og] = vector
         return np.ma.masked_invalid(mat.reshape((self.ny - 1, self.nx - 1)))
@@ -158,7 +158,7 @@ class physical_space:
             c = (self.coords[b_i[0]][0], self.coords[b_i[0]][1])
             w = self.coords[b_i[1]][0] - self.coords[b_i[0]][0]
             h = self.coords[b_i[2]][1] - self.coords[b_i[0]][1]
-
+            
             if isinstance(ax, GeoAxes):
                 ax.plot([c[0], c[0] + w, c[0] + w, c[0], c[0]],
                         [c[1], c[1], c[1] + h, c[1] + h, c[1]],

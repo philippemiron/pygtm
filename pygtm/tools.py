@@ -1,5 +1,4 @@
 import os
-import sys
 from datetime import datetime
 import numpy as np
 from pathlib import Path
@@ -315,7 +314,7 @@ def export_nc(filename, data, mat, nirvana_state=False, debug=False):
     f.createDimension('nbCoords', nx * ny)
     f.createDimension('nbParts', np.sum(M))
 
-    if np.all(mat.R == None) or np.all(mat.L == None):
+    if np.all(mat.R is None) or np.all(mat.L is None):
         nbEigenvalues = 0
     else:
         nbEigenvalues = min(np.shape(R)[1], np.shape(L)[1])

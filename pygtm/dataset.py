@@ -217,7 +217,6 @@ class trajectory:
             self.xt = x0
             self.yt = y0
 
-
     def filtering(self, x_range=None, y_range=None, t_range=None, complete_track=True):
         """
         Returns trajectory in a spatial domain and/or temporal range
@@ -233,7 +232,7 @@ class trajectory:
                 - i: segment number (Ns)
                 - j: coordinates of the beginning (0) or end (1) of the segment i
                 - k: longitude (0) or latitude (1) of the coordiates j
-            segs_t [Ns]: time associated to each segments 
+            segs_t [Ns]: time associated to each segments
             segs_ind [Nt,2]: indices of the first and last segment of a trajectory
                      ex: trajectory 0 contains the segs[segs_ind[0,0]:segs_ind[0,1]]
         """
@@ -261,7 +260,7 @@ class trajectory:
             keep = np.logical_and.reduce(
                 (xd >= x_range[0], xd <= x_range[1], yd >= y_range[0], yd <= y_range[1], td >= t_range[0], td <= t_range[1])
             )
-            
+
             if np.sum(keep) > 1:
                 # if complete_track: full trajectories is plotted
                 # else: only after reaching the region
@@ -271,7 +270,7 @@ class trajectory:
                     xd = xd[reach:]
                     yd = yd[reach:]
                     td = td[reach:]
-                
+
                 if len(xd) > 1:
                     # search for trajectories crossing the ±180
                     cross_world = np.where(np.diff(np.sign(xd)))[0]
@@ -279,14 +278,14 @@ class trajectory:
 
                     for k in range(0, len(cross_world) - 1):
                         ind = np.arange(cross_world[k] + 1, cross_world[k + 1] + 1)
-                        
+
                         if len(ind) > 1:
                             # reorganize array for LineCollection
                             pts = np.array([xd[ind], yd[ind]]).T.reshape(-1, 1, 2)
                             segs_i = np.concatenate([pts[:-1], pts[1:]], axis=1)
 
                             if len(segs_i) > 1:
-                                segs_t_i = np.convolve(td, np.repeat(1.0, 2) / 2, 'valid') # average per segment
+                                segs_t_i = np.convolve(td, np.repeat(1.0, 2) / 2, 'valid')  # average per segment
                             else:
                                 segs_t_i = td
 
