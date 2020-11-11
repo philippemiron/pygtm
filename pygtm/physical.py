@@ -13,7 +13,6 @@ class physical_space:
         # the bins are generated inside the limit of the domain and one variable controlling the spatial resolution
         # the number of bins in one direction equal to resolution and the other direction is chosen to build square bins
         self.nx, self.ny = self.uniform_grid(self.lon, self.lat, self.resolution)
-
         self.coords, self.bins, self.vx, self.vy, self.dx, self.dy = self.create_grid(lon, lat, self.nx, self.ny)
 
         # initialize the id of each of the bins from 1 to N0

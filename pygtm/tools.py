@@ -106,12 +106,12 @@ def filter_region(data, xc, yc):
     rpath = path.Path(np.vstack((xc, yc)).T)
     keep = np.where(~rpath.contains_points(np.vstack((data.x0, data.y0)).T))[0]
     [data.x0, data.y0, data.xt, data.yt] = filter_vector([data.x0, data.y0, data.xt, data.yt], keep)
-    
+
 
 def remove_communication(d, data, x1, y1, x2, y2):
     """
     Remove the connection between two regions defined by (x1, y1) and (x2, y2)
-    The two regions have to share a common edge, e.g. two regions: Atlantic and 
+    The two regions have to share a common edge, e.g. two regions: Atlantic and
     Pacific oceans with a common intersection at the Isthmus of Panama
 
     Args:
@@ -133,7 +133,6 @@ def remove_communication(d, data, x1, y1, x2, y2):
 
     # for each bin we calculate how much segments are in r1 and r2
     remove = np.empty(0)
-
     bins_xy0 = d.find_element(data.x0, data.y0)
     bins_xyt = d.find_element(data.xt, data.yt)
 
@@ -149,8 +148,8 @@ def remove_communication(d, data, x1, y1, x2, y2):
     # remove once at the end
     keep = np.setdiff1d(np.arange(0, len(data.x0)), remove)
     [data.x0, data.y0, data.xt, data.yt] = filter_vector([data.x0, data.y0, data.xt, data.yt], keep)
-    
-    
+
+
 def remove_panama_communication(d, data):
     """
     Function that call remove_communication_two_regions for a specific case
@@ -163,7 +162,7 @@ def remove_panama_communication(d, data):
     y_ao = np.array([25, 25, 20, 13, 9, 8.25, 9.25, 8.5, 6, 0, 25])
     remove_communication(d, data, x_po, y_po, x_ao, y_ao)
 
-    
+
 def remove_indonesia_communication(d, data):
     """
     Function that call remove_communication_two_regions for a specific case
@@ -175,7 +174,7 @@ def remove_indonesia_communication(d, data):
     x_po = np.array([99, 99, 98.8, 102, 103.5, 103.5, 107.5, 114, 120, 127, 138, 138, 95, 95, 99])
     y_po = np.array([25, 11.5, 8.8, 4.3, 2, -3, -7, -8.2, -8.6, -8.45, -8.3, -22, -22, 25, 25])
     remove_communication(d, data, x_io, y_io, x_po, y_po)
-    
+
 
 def restrict_to_subregion(data, tm, region):
     """Extract a subregion from the global transition matrix

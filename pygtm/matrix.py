@@ -252,7 +252,7 @@ class matrix_space:
         Returns:
             array [N]: residence time
         """
-        c = np.zeros(self.N)
+        c = np.zeros(len(self.P))
         a = sc.sparse.eye(len(target)) - self.P[np.ix_(target, target)]
         b = np.ones(len(a))
         # naturally, outside of the target the residence time is zero
@@ -270,5 +270,5 @@ class matrix_space:
         '''
         #  The hitting time of set A is equal to the residence time
         # of set B, with B set as the completent of set A
-        diff_target = np.setdiff1d(np.arange(0, len(P)), target)
-        return residence_time(diff_target)
+        diff_target = np.setdiff1d(np.arange(0, len(self.P)), target)
+        return self.residence_time(diff_target)
