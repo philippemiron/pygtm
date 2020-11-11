@@ -1,4 +1,4 @@
-name: example-environment
+name: pygtm-env
 channels:
   - conda-forge
 dependencies:

@@ -6,7 +6,8 @@ before_install:
   - "export PYTHONPATH=$PYTHONPATH:$(pwd)"
 
 install:
-  - pip install numpy scipy scikit-learn matplotlib h5py netCDF4 cartopy==0.17 cmocean
+  - conda env create --file=environment.yml
+  - conda activate pygtm-env
 
 script:
   - pytest tests/*
