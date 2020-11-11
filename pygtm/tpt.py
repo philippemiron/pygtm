@@ -85,7 +85,7 @@ class path_theory:
         # flow out - flow in
         # positive value means exiting the domain
         fp = f - f.T
-        fp[fp<0] = 0
+        fp[fp < 0] = 0
 
         # we don't calculate the current towards
         # the virtual nirvana state

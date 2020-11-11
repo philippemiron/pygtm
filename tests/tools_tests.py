@@ -11,12 +11,12 @@ class tools_tests(TestCase):
     def test_ismember(self):
         a = [1, 2]
         b = [3, 4]
-        self.assertSequenceEqual(ismember(a,b).tolist(), [-1, -1])
+        self.assertSequenceEqual(ismember(a, b).tolist(), [-1, -1])
 
         a = [1, 2, 3]
         b = [1, 2, 4, 5]
-        self.assertSequenceEqual(ismember(a,b).tolist(), [0, 1, -1])
-        self.assertSequenceEqual(ismember(b,a).tolist(), [0, 1, -1, -1])
+        self.assertSequenceEqual(ismember(a, b).tolist(), [0, 1, -1])
+        self.assertSequenceEqual(ismember(b, a).tolist(), [0, 1, -1, -1])
 
     def test_filter_vector(self):
         # the second arguments is either a list of indices or a
