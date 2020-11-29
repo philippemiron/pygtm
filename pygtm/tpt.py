@@ -103,7 +103,7 @@ class path_theory:
             e[e == 0] = 1
             ex = ex/e
             ey = ey/e
-            fx[i] = np.sum(fp[i, :N]*ex)
+            fx[i] = np.sum(fp[i, :N]*ex) 
             fy[i] = np.sum(fp[i, :N]*ey)
 
         return f, fx, fy
