@@ -1,11 +1,11 @@
 # pygtm : a python Geospatial Transition Matrix toolbox
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/philippemiron/pygtm/main?filepath=examples%2F)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/philippemiron/pygtm/main?filepath=tutorials%2F)
 [![HitCount](http://hits.dwyl.com/philippemiron/pygtm.svg)](http://hits.dwyl.com/philippemiron/pygtm)
 
 ### Folders
-- examples: Jupyter notebook examples to help interacting with the toolbox
-- papers: codes for published papers (coming soon!)
+- tutorials/: Jupyter notebook examples to help interacting with the toolbox
+- papers/: codes for published papers (coming soon!)
 
 ### Used in the following Publications
 - Transition paths of marine debris and the stability of the garbage patches, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, M.S. Lozier, L. Helfmann and P. Koltai, Preprint, TBD, 2020
