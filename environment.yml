@@ -1,8 +1,8 @@
-name: pygtm-env
+name: pygtm
 channels:
   - conda-forge
 dependencies:
-  - cartopy==0.17
+  - cartopy==0.18
   - numpy
   - scipy
   - matplotlib
