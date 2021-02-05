@@ -5,7 +5,7 @@
 
 ### Folders
 - tutorials/: Jupyter notebook examples to help interacting with the toolbox
-- papers/: codes for published papers (coming soon!)
+- publications/: code to reproduce analysis of published papers
 
 ### Used in the following Publications
 - Transition paths of marine debris and the stability of the garbage patches, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, M.S. Lozier, L. Helfmann and P. Koltai, Preprint, TBD, 2020
