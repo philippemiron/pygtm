@@ -4,4 +4,4 @@ __pycache__/
 .idea/
 .DS_Store
 */.DS_Store
-publications/
+publications/*
