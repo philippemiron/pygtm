@@ -5,7 +5,6 @@
 
 ### Folders
 - tutorials/: Jupyter notebook examples to help interacting with the toolbox
-- publications/: code to reproduce analysis of published papers
 
 ### Used in the following Publications
 - Identification and quantification of North Atlantic Deep Water pathways, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, K.L. Drouin and M.S. Lozier, Preprint, Preprint, 2021
