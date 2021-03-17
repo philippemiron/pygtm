@@ -140,7 +140,7 @@ class physical_space:
         mat[self.id_og] = vector
         return np.ma.masked_invalid(mat.reshape((self.ny - 1, self.nx - 1)))
 
-    def bins_contours(self, ax, color='k', bin_id=None):
+    def bins_contour(self, ax, color='k', bin_id=None):
         """
         Plot all element bins on one axis
         Args:
