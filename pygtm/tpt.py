@@ -78,8 +78,10 @@ class path_theory:
             fx: array [N] x-direction of the current for each bin
             fy: array [N] y-direction of the current for each bin
         '''
-        # current
+        # reactive current
+        # f = q_i^+ P_ij q_j^+ p_i
         f = np.diag(q_b*self.p) @ self.P @ np.diag(q_f)
+        np.fill_diagonal(f, 0) # Metzner sets the diagonal to 0
 
         # to obtain the reactive current we have to evaluate
         # flow out - flow in
@@ -103,7 +105,7 @@ class path_theory:
             e[e == 0] = 1
             ex = ex/e
             ey = ey/e
-            fx[i] = np.sum(fp[i, :N]*ex) 
+            fx[i] = np.sum(fp[i, :N]*ex)
             fy[i] = np.sum(fp[i, :N]*ey)
 
         return f, fx, fy
