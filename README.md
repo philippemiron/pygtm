@@ -20,3 +20,9 @@
 - Philippe Miron
 - Luzie Helfmann
   - *pygtm/tpt.py* is based on this [repo](https://github.com/LuzieH/pytpt)
+
+
+### Supporting Grants
+- Consortium for Advanced Research on Transport of Hydrocarbon in the Environment ([CARTHE](http://carthe.org/))
+- Consorcio de Investigación del Golfo de México ([CIGoM](https://cigom.org/en/))
+- National Science Foundation ([NSF OCE #1851097](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1851097))
