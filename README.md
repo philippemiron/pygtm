@@ -8,7 +8,7 @@
 - tests/: Unit tests
 
 ### Used in the following Publications
-- Identification and quantification of North Atlantic Deep Water pathways, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, K.L. Drouin and M.S. Lozier, Preprint, Preprint, 2021
+- Identification and quantification of North Atlantic Deep Water pathways, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, K.L. Drouin and M.S. Lozier, Preprint, 2021
 - Influence of the Loop Current on the Gulf of Mexico connectivity, P. Miron, TBD
 - Transition paths of marine debris and the stability of the garbage patches, P. Miron, F.J. Beron-Vera, L. Helfmann and P. Koltai, Chaos: An Interdisciplinary Journal of Nonlinear Science, 2021, [link](https://aip.scitation.org/doi/10.1063/5.0030535)
 - Markov-chain-inspired search for MH370, P. Miron, F. J. Beron-Vera, M. J. Olascoaga and P. Koltai, Chaos: An Interdisciplinary Journal of Nonlinear Science, 2020, [link](https://aip.scitation.org/doi/10.1063/1.5092132)
