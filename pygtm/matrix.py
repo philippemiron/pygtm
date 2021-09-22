@@ -12,6 +12,7 @@ class matrix_space:
     def __init__(self, domain):
         self.domain = domain
         self.N = len(domain.bins)
+        self.T = None
         self.B = None
         self.P = None
         self.M = None
@@ -41,7 +42,7 @@ class matrix_space:
             P: transition matrix
             M: number of particles per bins at time t
         """
-        # Function to evaluate the transition Matrix
+        # Function to evaluate the transition Matrix        
         # For each elements id [1:N]
         # B[id] stores the index of all particles in this bin at time t0
         idel = self.domain.find_element(data.x0, data.y0)
@@ -51,10 +52,10 @@ class matrix_space:
                 self.B[idel[i]].append(i)
 
         # exclude bins inside domain where no particle visited
-        self.B = np.asarray(self.B)
+        self.B = np.asarray(self.B, dtype='object')
         keep = self.B.astype(bool)
 
-        print('Domain contains %g bins. (%g bins were removed)' % (sum(keep), len(self.B) - sum(keep)))
+        # print('Domain contains %g bins. (%g bins were removed)' % (sum(keep), len(self.B) - sum(keep)))
         self.B, self.domain.bins, self.domain.id_og = tools.filter_vector([self.B, self.domain.bins, self.domain.id_og],
                                                                           keep)
         self.N = len(self.domain.bins)

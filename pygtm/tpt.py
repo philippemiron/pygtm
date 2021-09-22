@@ -130,7 +130,11 @@ class path_theory:
         # density of reactive trajectories
         mu = q_b * self.p * q_f
         z = np.sum(mu)
-        mu /= z
+        
+        if z == 0:
+            mu = np.nan
+        else:
+            mu /= z
 
         # rate of reactive trajectories
         k = np.sum(f[ind_a, :])  # out of the source
@@ -139,6 +143,9 @@ class path_theory:
         # k = np.sum(f[:, ind_b])  # in the target
 
         # mean duration of reactive trajectories
-        t = z / k
+        if k == 0:
+            t = np.nan
+        else:
+            t = z / k
 
         return mu, k, t
