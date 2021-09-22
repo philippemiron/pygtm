@@ -9,5 +9,5 @@ setup(name='pygtm',
       license='MIT',
       packages=['pygtm'],
       zip_safe=False,
-      install_requires=['numpy', 'scipy', 'cartopy', 'scikit-learn', 'matplotlib', 'netCDF4', 'cmocean', 'h5py']
+      install_requires=['numpy', 'scipy', 'cartopy', 'scikit-learn', 'matplotlib', 'netCDF4', 'cmocean']
       )

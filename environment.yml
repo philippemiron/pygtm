@@ -8,6 +8,5 @@ dependencies:
   - matplotlib
   - scikit-learn
   - netCDF4
-  - h5py
   - cmocean
   - pytest
