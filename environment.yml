@@ -2,7 +2,7 @@ name: pygtm
 channels:
   - conda-forge
 dependencies:
-  - cartopy==0.18
+  - cartopy
   - numpy
   - scipy
   - matplotlib
