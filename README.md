@@ -1,5 +1,5 @@
 # pygtm : a python Geospatial Transition Matrix toolbox
-[![Documentation Status](https://geophysical-transition-matrix.readthedocs.io/en/latest/?badge=latest)](https://geophysical-transition-matrix.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/geophysical-transition-matrix/badge/?version=latest)](https://geophysical-transition-matrix.readthedocs.io/en/latest/?badge=latest)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/philippemiron/pygtm/main?filepath=tutorials%2F)
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fphilippemiron%2Fpygtm&count_bg=%2379C83D&title_bg=%23555555&icon=staticman.svg&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
