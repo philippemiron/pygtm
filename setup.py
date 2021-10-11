@@ -5,9 +5,9 @@ setup(name='pygtm',
       description='python Geospatial Transition Matrix (pygtm) toolsets',
       url='http://github.com/philippemiron/pygtm',
       author='Philippe Miron',
-      author_email='pmiron@rsmas.miami.edu',
+      author_email='pmiron@fsu.edu',
       license='MIT',
       packages=['pygtm'],
       zip_safe=False,
-      install_requires=['numpy', 'scipy', 'cartopy', 'scikit-learn', 'matplotlib', 'netCDF4', 'cmocean', 'h5py']
+      install_requires=['numpy', 'scipy', 'cartopy', 'scikit-learn', 'matplotlib', 'netCDF4', 'cmocean']
       )
