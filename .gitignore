@@ -1,7 +1,15 @@
+.DS_Store
+*/.DS_Store
 .ipynb_checkpoints
 __pycache__/
 */__pycache__/
+
+# pycharm
 .idea/
-.DS_Store
-*/.DS_Store
+
+# readthedocs
+docs/_build/
+docs/_templates/
+
+# this will eventually be public
 publications/
