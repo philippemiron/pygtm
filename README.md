@@ -8,7 +8,7 @@
 - tests/: Unit tests
 
 ### Used in the following Publications
-- Identification and quantification of North Atlantic Deep Water pathways, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, K.L. Drouin, and M.S. Lozier, Preprint, 2021
+- Transition paths of North Atlantic Deep Water, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, 2021, [link](https://doi.org/10.1175/JTECH-D-22-0022.1)
 - Surface pathways connecting the South and North Atlantic Oceans, K.L. Drouin, M.S. Lozier, F.J. Beron-Vera, P. Miron, and M.J. Olascoaga, Preprint, 2021
 - Influence of the Loop Current on the Gulf of Mexico connectivity, P. Miron, TBD
 - Transition paths of marine debris and the stability of the garbage patches, P. Miron, F.J. Beron-Vera, L. Helfmann, and P. Koltai, Chaos: An Interdisciplinary Journal of Nonlinear Science, 2021, [link](https://aip.scitation.org/doi/10.1063/5.0030535)
