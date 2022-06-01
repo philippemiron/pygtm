@@ -1,6 +1,8 @@
 # pygtm : a python Geospatial Transition Matrix toolbox
 
-|docs| |binder| |hits|
+[![Documentation Status](https://readthedocs.org/projects/geophysical-transition-matrix/badge/?version=latest)](https://geophysical-transition-matrix.readthedocs.io/en/latest/?badge=latest)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/philippemiron/pygtm/main?filepath=tutorials%2F)
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fphilippemiron%2Fpygtm&count_bg=%2379C83D&title_bg=%23555555&icon=staticman.svg&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
 ### Folders
 - tutorials/: Jupyter notebook examples to help interacting with the toolbox
@@ -33,17 +35,17 @@ This project follows [NumFOCUS code of conduct](https://numfocus.org/code-of-con
 - We is dedicated to providing a harassment-free community for everyone, regardless of gender, sexual orientation, gender identity and expression, disability, physical appearance, body size, race, or religion. We do not tolerate harassment of community members in any form.
 - Thank you for helping make this a welcoming, friendly community for all.
 
-.. |docs| image:: https://readthedocs.org/projects/geophysical-transition-matrix/badge/?version=latest
+.. |docs| image:: https://readthedocs.org/projects/docs/badge/?version=latest
     :alt: Documentation Status
     :scale: 100%
-    :target: https://geophysical-transition-matrix.readthedocs.io/en/latest/?badge=latest
+    :target: https://docs.readthedocs.io/en/latest/?badge=latest
 
-.. |binder| image:: https://mybinder.org/badge_logo.svg
-    :alt: Binder
+.. |coverage| image:: https://codecov.io/gh/readthedocs/readthedocs.org/branch/main/graph/badge.svg
+    :alt: Test coverage
     :scale: 100%
-    :target: https://mybinder.org/v2/gh/philippemiron/pygtm/main?filepath=tutorials%2F
+    :target: https://codecov.io/gh/readthedocs/readthedocs.org
 
-.. |hits| image:: https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fphilippemiron%2Fpygtm&count_bg=%2379C83D&title_bg=%23555555&icon=staticman.svg&icon_color=%23E7E7E7&title=hits&edge_flat=false
-    :alt: Hits
+.. |black|  image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :alt: Code style: black
     :scale: 100%
-    :target: https://hits.seeyoufarm.com
+    :target: https://github.com/psf/black
