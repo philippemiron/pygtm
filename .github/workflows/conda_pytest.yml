@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        os: ["ubuntu-latest"]  # , "macos-latest", "windows-latest"
         python-version: ["3.9"]
     steps:
       - name: Setup Mambaforge
@@ -51,4 +51,4 @@ jobs:
 
       - name: unittest
         working-directory: /home/runner/work/pygtm/pygtm/
-        run: $CONDA/bin/python -m unittest tests/*
+        run: ${{ env.CONDA }}/envs/clouddrift/bin/python -m unittest tests/*
