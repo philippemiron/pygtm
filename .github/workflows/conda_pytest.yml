@@ -4,9 +4,9 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ ci-test ]
   pull_request:
-    branches: [ main ]
+    branches: [ ci-test ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -14,24 +14,24 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   ci-pygtm:
-    name: Ex10 (${{ matrix.os }}, Mambaforge)
+    name: 'test'
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
       matrix:
         os: ["ubuntu"]
         python-version: [3.9"]
-        include:
-          - environment-file: environment.yml
     steps:
       - uses: actions/checkout@v2
       - uses: conda-incubator/setup-miniconda@v2
         with:
-          environment-file: ${{ matrix.environment-file }}
+          mamba-version: "*"
+          channels: conda-forge,defaults
+          environment-file: environment.yml
+          activate-environment: pygtm
           use-mamba: true
 
       - name: Unit testing
         working-directory: /home/runner/work/pygtm/
         run: |
-         $CONDA/bin/activate pygtm
          $CONDA/envs/pygtm/bin/python -m pytest tests/*.py
