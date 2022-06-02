@@ -51,4 +51,4 @@ jobs:
 
       - name: unittest
         working-directory: /home/runner/work/pygtm/pygtm/
-        run: /home/runner/work/pygtm/pygtm/.env/clouddrift/bin/python -m unittest tests/*
+        run: /home/runner/.envs/clouddrift/bin/python -m unittest tests/*
