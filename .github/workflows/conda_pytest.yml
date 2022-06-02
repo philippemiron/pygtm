@@ -54,4 +54,4 @@ jobs:
         run: |
           echo ${CONDA}
           ${CONDA}/bin/conda --version
-          $CONDA/envs/clouddrift/bin/python -m unittest tests/*
+          ls $CONDA/envs/clouddrift/bin/
