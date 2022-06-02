@@ -14,46 +14,24 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   ci-pygtm:
-    name: ci (${{ matrix.python-version }}, ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
+    name: Ex10 (${{ matrix.os }}, Mambaforge)
+    runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest"]  # , "macos-latest", "windows-latest"
-        python-version: ["3.9"]
+        os: ["ubuntu"]
+        python-version: [3.9"]
+        include:
+          - environment-file: environment.yml
     steps:
-      - name: Setup Mambaforge
-        uses: conda-incubator/setup-miniconda@v2
+      - uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v2
         with:
-          miniforge-variant: Mambaforge
-          miniforge-version: latest
-          activate-environment: pygtm
+          environment-file: ${{ matrix.environment-file }}
           use-mamba: true
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
-#      - name: Get Date
-#        id: get-date
-#        run: echo "::set-output name=today::$(/bin/date -u '+%Y%m%d')"
-#        shell: bash
-
-#      - name: Cache Conda env
-#        uses: actions/cache@v2
-#        with:
-#          path: ${{ env.CONDA }}/envs
-#          key: conda-${{ runner.os }}--${{ runner.arch }}--${{ steps.get-date.outputs.today }}-${{ hashFiles('environment.yml') }}-${{ env.CACHE_NUMBER }}
-#        env:
-#          # Increase this value to reset cache if etc/example-environment.yml has not changed
-#          CACHE_NUMBER: 0
-#        id: cache
-#
-#      - name: Update environment
-#        run: mamba update -n pygtm environment.yml
-#        if: steps.cache.outputs.cache-hit != 'true'
-#
-#      - name: Unit testing
-#        working-directory: /home/runner/work/pygtm/
-#        run: |
-#          $CONDA/bin/activate pygtm
-#          $CONDA/envs/pygtm/bin/python -m pytest tests/*.py
+      - name: Unit testing
+        working-directory: /home/runner/work/pygtm/
+        run: |
+         $CONDA/bin/activate pygtm
+         $CONDA/envs/pygtm/bin/python -m pytest tests/*.py
