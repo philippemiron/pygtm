@@ -50,5 +50,6 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: unittest
+        working-directory: /home/runner/work/pygtm/pygtm/
         run: |
           python -m unittest tests/*
