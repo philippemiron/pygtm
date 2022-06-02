@@ -50,7 +50,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Unit testing
-        working-directory: /home/runner/work/pygtm/pygtm/
+        working-directory: /home/runner/work/pygtm/
         run: |
           $CONDA/bin/activate pygtm
           python -m unittest tests/*.py
