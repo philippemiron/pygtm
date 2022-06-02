@@ -49,9 +49,6 @@ jobs:
         run: mamba update -n clouddrift environment.yml
         if: steps.cache.outputs.cache-hit != 'true'
 
-      - name: Test
-        uses: onichandame/python-test-action@master
-
-      #- name: unittest
-      #  working-directory: /home/runner/work/pygtm/pygtm/
-      #  run: ${{ env.CONDA }}/envs/clouddrift/bin/python -m unittest tests/*
+      - name: unittest
+        working-directory: /home/runner/work/pygtm/pygtm/
+        run: '/home/runner/work/pygtm/pygtm/.env/clouddrift/bin/python -m unittest tests/*
