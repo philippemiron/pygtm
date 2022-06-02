@@ -52,5 +52,5 @@ jobs:
       - name: Unit testing
         working-directory: /home/runner/work/pygtm/pygtm/
         run: |
-          echo ${CONDA}
-          $CONDA/envs/pygtm/bin/python -m unittest tests/*.py
+          conda activate pygtm
+          python -m unittest tests/*.py
