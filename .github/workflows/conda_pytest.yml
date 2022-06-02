@@ -49,6 +49,6 @@ jobs:
         run: mamba update -n clouddrift environment.yml
         if: steps.cache.outputs.cache-hit != 'true'
 
-      - name: unittest
+      - name: Unit testing
         working-directory: /home/runner/work/pygtm/pygtm/
-        run: /home/runner/.envs/clouddrift/bin/python -m unittest tests/*
+        run: $CONDA/.envs/clouddrift/bin/python -m unittest tests/*
