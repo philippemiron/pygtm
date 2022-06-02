@@ -34,4 +34,4 @@ jobs:
       - name: Unit testing
         working-directory: /home/runner/work/pygtm/
         run: |
-         $CONDA/envs/pygtm/bin/python -m pytest tests/*.py
+         $CONDA/envs/pygtm/bin/python -m unittest tests/*.py
