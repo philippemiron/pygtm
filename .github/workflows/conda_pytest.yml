@@ -31,5 +31,6 @@ jobs:
           channels: conda-forge,defaults
           channel-priority: true
       - name: Unit testing
+        shell: bash -l {0}
         run: |
-              $CONDA/bin/python -m unittest discover -s tests -p "*.py"
+              python -m unittest discover -s tests -p "*.py"
