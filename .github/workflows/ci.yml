@@ -30,8 +30,5 @@ jobs:
           mamba-version: "*"
           channels: conda-forge,defaults
           channel-priority: true
-      - uses: psf/black@stable
       - name: Unit testing
-        shell: bash -l {0}
-        run: |
-              python -m unittest discover -s tests -p "*.py"
+        run: python -m unittest discover -s tests -p "*.py"
