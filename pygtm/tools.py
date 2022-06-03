@@ -62,7 +62,9 @@ def bins_in_contour(d, xc, yc, return_path=False):
     """
     p = path.Path(np.vstack((xc, yc)).T)
     bins_xy = np.where(p.contains_points(d.coords))[0]
-    bins = np.where(np.any(np.in1d(d.bins.reshape(1, -1), bins_xy).reshape(len(d.bins), 4), 1))[0]
+    bins = np.where(
+        np.any(np.in1d(d.bins.reshape(1, -1), bins_xy).reshape(len(d.bins), 4), 1)
+    )[0]
     return (np.unique(bins), p) if return_path else np.unique(bins)
 
 
@@ -81,13 +83,15 @@ def segments_in_contour(data, xc, yc, segments=None):
     p = path.Path(np.vstack((xc, yc)).T)
 
     # considering begining (x0), end (xt) or both
-    if segments == 'start':
+    if segments == "start":
         s_in = p.contains_points(np.vstack((data.x0, data.y0)).T)
-    elif segments == 'end':
+    elif segments == "end":
         s_in = p.contains_points(np.vstack((data.xt, data.yt)).T)
     else:
-        s_in = np.logical_or(p.contains_points(np.vstack((data.x0, data.y0)).T),
-                             p.contains_points(np.vstack((data.xt, data.yt)).T))
+        s_in = np.logical_or(
+            p.contains_points(np.vstack((data.x0, data.y0)).T),
+            p.contains_points(np.vstack((data.xt, data.yt)).T),
+        )
     return s_in
 
 
@@ -104,7 +108,9 @@ def filter_region(data, xc, yc):
     """
     rpath = path.Path(np.vstack((xc, yc)).T)
     keep = np.where(~rpath.contains_points(np.vstack((data.x0, data.y0)).T))[0]
-    [data.x0, data.y0, data.xt, data.yt] = filter_vector([data.x0, data.y0, data.xt, data.yt], keep)
+    [data.x0, data.y0, data.xt, data.yt] = filter_vector(
+        [data.x0, data.y0, data.xt, data.yt], keep
+    )
 
 
 def remove_communication(d, data, x1, y1, x2, y2):
@@ -146,7 +152,9 @@ def remove_communication(d, data, x1, y1, x2, y2):
 
     # remove once at the end
     keep = np.setdiff1d(np.arange(0, len(data.x0)), remove)
-    [data.x0, data.y0, data.xt, data.yt] = filter_vector([data.x0, data.y0, data.xt, data.yt], keep)
+    [data.x0, data.y0, data.xt, data.yt] = filter_vector(
+        [data.x0, data.y0, data.xt, data.yt], keep
+    )
 
 
 def remove_panama_communication(d, data):
@@ -168,10 +176,16 @@ def remove_indonesia_communication(d, data):
     with predefined region boundaries
     """
     # Maritime continent
-    x_io = np.array([99, 99, 98.8, 102, 103.5, 103.5, 107.5, 114, 120, 127, 138, 138, 99])
+    x_io = np.array(
+        [99, 99, 98.8, 102, 103.5, 103.5, 107.5, 114, 120, 127, 138, 138, 99]
+    )
     y_io = np.array([25, 11.5, 8.8, 4.3, 2, -3, -7, -8.2, -8.6, -8.45, -8.3, 25, 25])
-    x_po = np.array([99, 99, 98.8, 102, 103.5, 103.5, 107.5, 114, 120, 127, 138, 138, 95, 95, 99])
-    y_po = np.array([25, 11.5, 8.8, 4.3, 2, -3, -7, -8.2, -8.6, -8.45, -8.3, -22, -22, 25, 25])
+    x_po = np.array(
+        [99, 99, 98.8, 102, 103.5, 103.5, 107.5, 114, 120, 127, 138, 138, 95, 95, 99]
+    )
+    y_po = np.array(
+        [25, 11.5, 8.8, 4.3, 2, -3, -7, -8.2, -8.6, -8.45, -8.3, -22, -22, 25, 25]
+    )
     remove_communication(d, data, x_io, y_io, x_po, y_po)
 
 
@@ -184,32 +198,90 @@ def restrict_to_subregion(data, tm, region):
         region: ['Atlantic Ocean', 'Atlantic Ocean extended', 'Pacific Ocean', 'Indian Ocean']
     """
     if region == "Atlantic Ocean":
-        xr = np.array([-104, -104, -98, -84.99, -83.19, -81.06, -79.36, -77.55, -60, -72, -72, 22, 22, -104])
-        yr = np.array([90, 25.5, 18, 13.4, 9.16, 8.23, 9.35, 8.31, -10.5, -54, -90, -90, 90, 90])
+        xr = np.array(
+            [
+                -104,
+                -104,
+                -98,
+                -84.99,
+                -83.19,
+                -81.06,
+                -79.36,
+                -77.55,
+                -60,
+                -72,
+                -72,
+                22,
+                22,
+                -104,
+            ]
+        )
+        yr = np.array(
+            [90, 25.5, 18, 13.4, 9.16, 8.23, 9.35, 8.31, -10.5, -54, -90, -90, 90, 90]
+        )
         xyr = [[xr, yr]]
-    elif region == 'Atlantic Ocean extended':
-        xr = np.array([-104, -104, -98, -84.99, -83.19, -81.06, -79.36, -77.55, -60, -72, -72, 51, 51, -104])
-        yr = np.array([90, 25.5, 18, 13.4, 9.16, 8.23, 9.35, 8.31, -10.5, -54, -90, -90, 90, 90])
+    elif region == "Atlantic Ocean extended":
+        xr = np.array(
+            [
+                -104,
+                -104,
+                -98,
+                -84.99,
+                -83.19,
+                -81.06,
+                -79.36,
+                -77.55,
+                -60,
+                -72,
+                -72,
+                51,
+                51,
+                -104,
+            ]
+        )
+        yr = np.array(
+            [90, 25.5, 18, 13.4, 9.16, 8.23, 9.35, 8.31, -10.5, -54, -90, -90, 90, 90]
+        )
         xyr = [[xr, yr]]
-    elif region == 'Pacific Ocean':
-        xr = np.array([-104, -104, -98, -84.99, -83.19, -81.06, -79.36, -77.55, -60, -72, -72, -180, -180, -104])
-        yr = np.array([90, 25.5, 18, 13.4, 9.16, 8.23, 9.35, 8.31, -10.5, -54, -90, -90, 90, 90])
+    elif region == "Pacific Ocean":
+        xr = np.array(
+            [
+                -104,
+                -104,
+                -98,
+                -84.99,
+                -83.19,
+                -81.06,
+                -79.36,
+                -77.55,
+                -60,
+                -72,
+                -72,
+                -180,
+                -180,
+                -104,
+            ]
+        )
+        yr = np.array(
+            [90, 25.5, 18, 13.4, 9.16, 8.23, 9.35, 8.31, -10.5, -54, -90, -90, 90, 90]
+        )
         xr2 = np.array([98, 98, 102.4, 108.8, 125.7, 125.7, 135, 135, 180.1, 180.1, 98])
         yr2 = np.array([90, 26, -0.7, -7.21, -8.7, -23, -23, -90, -90, 90, 90])
         xyr = [[xr, yr], [xr2, yr2]]
-    elif region == 'Indian Ocean':
+    elif region == "Indian Ocean":
         xr = np.array([98, 102.4, 108.8, 125.7, 125.7, 135, 135, 22, 22, 26, 98])
         yr = np.array([26, -0.7, -7.21, -8.7, -23, -23, -90, -90, -20, 31, 26])
         xyr = [[xr, yr]]
     else:
         print(
-            'Available regions are: [\'Atlantic Ocean\', \'Atlantic Ocean extended\', \'Pacific Ocean\', \'Indian Ocean\']')
+            "Available regions are: ['Atlantic Ocean', 'Atlantic Ocean extended', 'Pacific Ocean', 'Indian Ocean']"
+        )
         return
 
     d = tm.domain
     # search bins inside region
-    ids = np.empty(0, dtype='int')
-    s = np.zeros_like(data.x0, dtype='bool')
+    ids = np.empty(0, dtype="int")
+    s = np.zeros_like(data.x0, dtype="bool")
     for xy in xyr:
         ids = np.append(ids, bins_in_contour(d, xy[0], xy[1]))
         s = np.logical_or(s, segments_in_contour(data, xy[0], xy[1]))
@@ -297,22 +369,22 @@ def export_nc(filename, data, mat, nirvana_state=False, debug=False):
         os.remove(filename)
 
     # basic description and variable dimensions
-    f = Dataset(filename, 'w', format='NETCDF4')
+    f = Dataset(filename, "w", format="NETCDF4")
     f.history = "Created " + datetime.today().strftime("%d/%m/%y")
     f.description = "Transition matrix from pygtm"
     # f.set_always_mask(False) # don't use masked_array by default
-    f.createDimension('N', N)
-    f.createDimension('N+1', N + 1)
-    f.createDimension('N0', N0)
-    f.createDimension('nx', nx)
-    f.createDimension('ny', ny)
-    f.createDimension('gridnx', nx - 1)
-    f.createDimension('gridny', ny - 1)
-    f.createDimension('pointsPerBin', 4)
-    f.createDimension('2', 2)
-    f.createDimension('nbSegments', len(x0))
-    f.createDimension('nbCoords', nx * ny)
-    f.createDimension('nbParts', np.sum(M))
+    f.createDimension("N", N)
+    f.createDimension("N+1", N + 1)
+    f.createDimension("N0", N0)
+    f.createDimension("nx", nx)
+    f.createDimension("ny", ny)
+    f.createDimension("gridnx", nx - 1)
+    f.createDimension("gridny", ny - 1)
+    f.createDimension("pointsPerBin", 4)
+    f.createDimension("2", 2)
+    f.createDimension("nbSegments", len(x0))
+    f.createDimension("nbCoords", nx * ny)
+    f.createDimension("nbParts", np.sum(M))
 
     if np.all(mat.R is None) or np.all(mat.L is None):
         nbEigenvalues = 0
@@ -323,53 +395,53 @@ def export_nc(filename, data, mat, nirvana_state=False, debug=False):
             L = L[:, :nbEigenvalues]
             eigL = eigL[:nbEigenvalues]
             eigR = eigR[:nbEigenvalues]
-    f.createDimension('nbEigenvalues', nbEigenvalues)
+    f.createDimension("nbEigenvalues", nbEigenvalues)
 
     # create variables in netCDF file
     # scalars
-    dx_ = f.createVariable('dx', dx.dtype)
-    dy_ = f.createVariable('dy', dy.dtype)
-    T_ = f.createVariable('T', type(T))
-    lonmin_ = f.createVariable('lonmin', 'd')
-    lonmax_ = f.createVariable('lonmax', 'd')
-    latmin_ = f.createVariable('latmin', 'd')
-    latmax_ = f.createVariable('latmax', 'd')
+    dx_ = f.createVariable("dx", dx.dtype)
+    dy_ = f.createVariable("dy", dy.dtype)
+    T_ = f.createVariable("T", type(T))
+    lonmin_ = f.createVariable("lonmin", "d")
+    lonmax_ = f.createVariable("lonmax", "d")
+    latmin_ = f.createVariable("latmin", "d")
+    latmax_ = f.createVariable("latmax", "d")
 
     # vectors
-    id_og_ = f.createVariable('id_og', id_og.dtype, 'N')
-    fi_ = f.createVariable('fi', fi.dtype, 'N')
-    fo_ = f.createVariable('fo', fo.dtype, 'N')
-    vx_ = f.createVariable('vx', vx.dtype, 'nx')
-    vy_ = f.createVariable('vy', vy.dtype, 'ny')
-    x0_ = f.createVariable('x0', x0.dtype, 'nbSegments')
-    y0_ = f.createVariable('y0', y0.dtype, 'nbSegments')
-    xt_ = f.createVariable('xt', xt.dtype, 'nbSegments')
-    yt_ = f.createVariable('yt', yt.dtype, 'nbSegments')
-    eigL_ = f.createVariable('eigL', 'd', ('nbEigenvalues'))
-    eigR_ = f.createVariable('eigR', 'd', ('nbEigenvalues'))
+    id_og_ = f.createVariable("id_og", id_og.dtype, "N")
+    fi_ = f.createVariable("fi", fi.dtype, "N")
+    fo_ = f.createVariable("fo", fo.dtype, "N")
+    vx_ = f.createVariable("vx", vx.dtype, "nx")
+    vy_ = f.createVariable("vy", vy.dtype, "ny")
+    x0_ = f.createVariable("x0", x0.dtype, "nbSegments")
+    y0_ = f.createVariable("y0", y0.dtype, "nbSegments")
+    xt_ = f.createVariable("xt", xt.dtype, "nbSegments")
+    yt_ = f.createVariable("yt", yt.dtype, "nbSegments")
+    eigL_ = f.createVariable("eigL", "d", ("nbEigenvalues"))
+    eigR_ = f.createVariable("eigR", "d", ("nbEigenvalues"))
 
     # transform 2d list into vector
     # we can use M to know what particles belong to what bins
     Bv = np.zeros(np.sum(M))
     j = 0
     for i in range(0, len(B)):
-        Bv[j:j + M[i]] = B[i]
+        Bv[j : j + M[i]] = B[i]
         j += M[i]
-    Bv_ = f.createVariable('Bv', Bv.dtype, ('nbParts'))
+    Bv_ = f.createVariable("Bv", Bv.dtype, ("nbParts"))
 
     # matrices
-    bins_ = f.createVariable('bins', bins.dtype, ('N', 'pointsPerBin'))
-    id_ = f.createVariable('id', id.dtype, ('gridny', 'gridnx'))
-    coords_ = f.createVariable('coords', coords.dtype, ('nbCoords', '2'))
-    M_ = f.createVariable('M', M.dtype, ('N'))
-    L_ = f.createVariable('L', 'd', ('N', 'nbEigenvalues'))
-    R_ = f.createVariable('R', 'd', ('N', 'nbEigenvalues'))
+    bins_ = f.createVariable("bins", bins.dtype, ("N", "pointsPerBin"))
+    id_ = f.createVariable("id", id.dtype, ("gridny", "gridnx"))
+    coords_ = f.createVariable("coords", coords.dtype, ("nbCoords", "2"))
+    M_ = f.createVariable("M", M.dtype, ("N"))
+    L_ = f.createVariable("L", "d", ("N", "nbEigenvalues"))
+    R_ = f.createVariable("R", "d", ("N", "nbEigenvalues"))
 
     # one more state in P in the presence of a Nirvana state
     if nirvana_state:
-        P_ = f.createVariable('P', P.dtype, ('N+1', 'N+1'))
+        P_ = f.createVariable("P", P.dtype, ("N+1", "N+1"))
     else:
-        P_ = f.createVariable('P', P.dtype, ('N', 'N'))
+        P_ = f.createVariable("P", P.dtype, ("N", "N"))
 
     # set data
     id_og_[:] = id_og
@@ -402,26 +474,26 @@ def export_nc(filename, data, mat, nirvana_state=False, debug=False):
     eigR_[:] = eigR
 
     # set units
-    dx_.units = 'degrees'
-    dy_.units = 'degrees'
-    lonmin_.units = 'degrees'
-    lonmax_.units = 'degrees'
-    latmin_.units = 'degrees'
-    latmax_.units = 'degrees'
-    vx_.units = 'meridional degrees'
-    vy_.units = 'zonal degrees'
-    x0_.units = 'meridional degrees'
-    xt_.units = 'meridional degrees'
-    y0_.units = 'zonal degrees'
-    yt_.units = 'zonal degrees'
-    coords_.units = 'coordinates degrees'
-    T_.units = 'days'
+    dx_.units = "degrees"
+    dy_.units = "degrees"
+    lonmin_.units = "degrees"
+    lonmax_.units = "degrees"
+    latmin_.units = "degrees"
+    latmax_.units = "degrees"
+    vx_.units = "meridional degrees"
+    vy_.units = "zonal degrees"
+    x0_.units = "meridional degrees"
+    xt_.units = "meridional degrees"
+    y0_.units = "zonal degrees"
+    yt_.units = "zonal degrees"
+    coords_.units = "coordinates degrees"
+    T_.units = "days"
     f.close()
 
     # plot description for validation
     if debug:
         filename = os.path.expanduser(filename)
-        f = Dataset(filename, 'r')
+        f = Dataset(filename, "r")
         print(f.variables)
         f.close()
 
@@ -439,47 +511,47 @@ def import_nc(filename):
 
     # open file
     filename = os.path.expanduser(filename)
-    f = Dataset(filename, 'r')
+    f = Dataset(filename, "r")
     f.set_always_mask(False)  # don't return all variable as np.ma
 
     # basic domain params
-    lon = [float(f['lonmin'][...]), float(f['lonmax'][...])]
-    lat = [float(f['latmin'][...]), float(f['latmax'][...])]
-    spatial_dis = len(f['vx'][...])
+    lon = [float(f["lonmin"][...]), float(f["lonmax"][...])]
+    lat = [float(f["latmin"][...]), float(f["latmax"][...])]
+    spatial_dis = len(f["vx"][...])
 
     # this is fast so we can just recreate
     # and update the element that were removed
     dom = physical.physical_space(lon, lat, spatial_dis)
-    dom.bins = f['bins'][...].astype('int')
-    dom.id = f['id'][...].astype('int')
-    dom.id_og = f['id_og'][...].astype('int')
+    dom.bins = f["bins"][...].astype("int")
+    dom.id = f["id"][...].astype("int")
+    dom.id_og = f["id_og"][...].astype("int")
 
     # fill data object
     # segments are saved but not original trajectories
     data = dataset.trajectory(x=None, y=None, t=None, ids=None)
-    data.T = f['T'][...]
-    data.x0 = f['x0'][...]
-    data.y0 = f['y0'][...]
-    data.xt = f['xt'][...]
-    data.yt = f['yt'][...]
+    data.T = f["T"][...]
+    data.x0 = f["x0"][...]
+    data.y0 = f["y0"][...]
+    data.xt = f["xt"][...]
+    data.yt = f["yt"][...]
 
     # fill matrix object
     mat = matrix.matrix_space(dom)
-    mat.P = f['P'][...]
-    mat.M = f['M'][...]
-    mat.L = f['L'][...]
-    mat.R = f['R'][...]
-    mat.eigL = f['eigL'][...]
-    mat.eigR = f['eigR'][...]
-    mat.fi = f['fi'][...]
-    mat.fo = f['fo'][...]
+    mat.P = f["P"][...]
+    mat.M = f["M"][...]
+    mat.L = f["L"][...]
+    mat.R = f["R"][...]
+    mat.eigL = f["eigL"][...]
+    mat.eigR = f["eigR"][...]
+    mat.fi = f["fi"][...]
+    mat.fo = f["fo"][...]
 
     # reconstruct B 2d list from Bv (vector) with M
     mat.B = []
-    Bv = f['Bv'][...]
+    Bv = f["Bv"][...]
     j = 0
     for i in range(0, len(mat.M)):
-        mat.B.append(Bv[j:j + mat.M[i]])
+        mat.B.append(Bv[j : j + mat.M[i]])
         j = j + mat.M[i]
     mat.B = np.asarray(mat.B)
     f.close()

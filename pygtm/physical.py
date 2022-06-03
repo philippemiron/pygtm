@@ -15,11 +15,13 @@ class physical_space:
         # the bins are generated inside the limit of the domain and one variable controlling the spatial resolution
         # the number of bins in one direction equal to resolution and the other direction is chosen to build square bins
         self.nx, self.ny = self.uniform_grid(self.lon, self.lat, self.resolution)
-        self.coords, self.bins, self.vx, self.vy, self.dx, self.dy = self.create_grid(lon, lat, self.nx, self.ny)
+        self.coords, self.bins, self.vx, self.vy, self.dx, self.dy = self.create_grid(
+            lon, lat, self.nx, self.ny
+        )
 
         # initialize the id of each of the bins from 1 to N0
         self.id = np.arange(0, (self.ny - 1) * (self.nx - 1))
-        self.id = self.id.reshape((self.ny - 1, self.nx - 1), order='C')
+        self.id = self.id.reshape((self.ny - 1, self.nx - 1), order="C")
 
         # during the algorithm if no particle is found inside bin i, it will be remove.
         # As a consequence, the probabilities of reaching (leaving) the element X is not
@@ -80,7 +82,7 @@ class physical_space:
         dy = y[1] - y[0]
 
         coords = np.array(np.meshgrid(x, y)).reshape(2, -1).T
-        bins = np.empty(((nx - 1) * (ny - 1), 4), dtype='uint16')
+        bins = np.empty(((nx - 1) * (ny - 1), 4), dtype="uint16")
         for i in range(0, ny - 1):
             for j in range(0, nx - 1):
                 n1 = i * nx + j
@@ -101,18 +103,24 @@ class physical_space:
             el_list: element number where the point(s) (x_i, y_i) is(are) located
         """
         # left: a[i - 1] < v <= a[i]
-        id_i = np.searchsorted(self.vy, y, side='left') - 1
-        id_j = np.searchsorted(self.vx, x, side='left') - 1
+        id_i = np.searchsorted(self.vy, y, side="left") - 1
+        id_j = np.searchsorted(self.vx, x, side="left") - 1
 
         # modify for elements on one side of the boundaries
         # right: a[i - 1] <= v < a[i]
         if np.any((y == self.vy[0])):
-            id_i[y == self.vy[0]] = np.searchsorted(self.vy, y[y == self.vy[0]], side='right') - 1
+            id_i[y == self.vy[0]] = (
+                np.searchsorted(self.vy, y[y == self.vy[0]], side="right") - 1
+            )
         if np.any((x == self.vx[0])):
-            id_j[x == self.vx[0]] = np.searchsorted(self.vx, x[x == self.vx[0]], side='right') - 1
+            id_j[x == self.vx[0]] = (
+                np.searchsorted(self.vx, x[x == self.vx[0]], side="right") - 1
+            )
 
         # make sure id_i and id_j inside the domain
-        keep = np.all((id_i >= 0, id_i < self.ny - 1, id_j >= 0, id_j < self.nx - 1), axis=0)
+        keep = np.all(
+            (id_i >= 0, id_i < self.ny - 1, id_j >= 0, id_j < self.nx - 1), axis=0
+        )
         id_i, id_j = tools.filter_vector([id_i, id_j], keep)
 
         if np.isscalar(x):
@@ -142,7 +150,7 @@ class physical_space:
         mat[self.id_og] = vector
         return np.ma.masked_invalid(mat.reshape((self.ny - 1, self.nx - 1)))
 
-    def bins_contour(self, ax, edgecolor='k', bin_id=None, projection=None):
+    def bins_contour(self, ax, edgecolor="k", bin_id=None, projection=None):
         """
         Plot all element bins on one axis
         Args:
@@ -162,7 +170,9 @@ class physical_space:
             c = (self.coords[b_i[0]][0], self.coords[b_i[0]][1])
             w = self.coords[b_i[1]][0] - self.coords[b_i[0]][0]
             h = self.coords[b_i[2]][1] - self.coords[b_i[0]][1]
-            patches.append(Rectangle(c, w, h, edgecolor=edgecolor, fill=False, linewidth=0.5))
+            patches.append(
+                Rectangle(c, w, h, edgecolor=edgecolor, fill=False, linewidth=0.5)
+            )
 
         if projection is not None:
             p = PatchCollection(patches, transform=projection, match_original=True)

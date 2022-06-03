@@ -3,7 +3,7 @@ from unittest import TestCase
 import numpy as np
 from pygtm.physical import physical_space
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 
@@ -34,28 +34,68 @@ class physical_tests(TestCase):
     # create_grid(lon, lat, nx, ny):
     def test_create_grid(self):
         # create a small grid of 6 elements (3 in lon and 2 in lat)
-        coords, elements, x, y, dx, dy = physical_space.create_grid([0, 10], [0, 2], 4, 3)
-        self.assertSequenceEqual(coords[:, 0].tolist(),
-                                 [0, 10 / 3, 20 / 3, 10, 0, 10 / 3, 20 / 3, 10, 0, 10 / 3, 20 / 3, 10])
-        self.assertSequenceEqual(coords[:, 1].tolist(), [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2])
-        self.assertSequenceEqual(elements.tolist(),
-                                 [[0, 1, 4, 5], [1, 2, 5, 6], [2, 3, 6, 7], [4, 5, 8, 9], [5, 6, 9, 10],
-                                  [6, 7, 10, 11]])
-        self.assertSequenceEqual((x.tolist(), y.tolist()), (
-            np.linspace(0, 10, 4, endpoint=True).tolist(), np.linspace(0, 2, 3, endpoint=True).tolist()))
+        coords, elements, x, y, dx, dy = physical_space.create_grid(
+            [0, 10], [0, 2], 4, 3
+        )
+        self.assertSequenceEqual(
+            coords[:, 0].tolist(),
+            [0, 10 / 3, 20 / 3, 10, 0, 10 / 3, 20 / 3, 10, 0, 10 / 3, 20 / 3, 10],
+        )
+        self.assertSequenceEqual(
+            coords[:, 1].tolist(), [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2]
+        )
+        self.assertSequenceEqual(
+            elements.tolist(),
+            [
+                [0, 1, 4, 5],
+                [1, 2, 5, 6],
+                [2, 3, 6, 7],
+                [4, 5, 8, 9],
+                [5, 6, 9, 10],
+                [6, 7, 10, 11],
+            ],
+        )
+        self.assertSequenceEqual(
+            (x.tolist(), y.tolist()),
+            (
+                np.linspace(0, 10, 4, endpoint=True).tolist(),
+                np.linspace(0, 2, 3, endpoint=True).tolist(),
+            ),
+        )
         self.assertEqual((dx, dy), (10 / 3, 1))
 
         # negative values in lon lat
         # create a small grid of 8 elements (4 in lon and 2 in lat)
-        coords, elements, x, y, dx, dy = physical_space.create_grid([-5, 5], [-1, 1], 5, 3)
-        self.assertSequenceEqual(coords[:, 0].tolist(),
-                                 [-5, -2.5, 0, 2.5, 5, -5, -2.5, 0, 2.5, 5, -5, -2.5, 0, 2.5, 5])
-        self.assertSequenceEqual(coords[:, 1].tolist(), [-1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
-        self.assertSequenceEqual(elements.tolist(),
-                                 [[0, 1, 5, 6], [1, 2, 6, 7], [2, 3, 7, 8], [3, 4, 8, 9],
-                                  [5, 6, 10, 11], [6, 7, 11, 12], [7, 8, 12, 13], [8, 9, 13, 14]])
-        self.assertSequenceEqual((x.tolist(), y.tolist()), (
-            np.linspace(-5, 5, 5, endpoint=True).tolist(), np.linspace(-1, 1, 3, endpoint=True).tolist()))
+        coords, elements, x, y, dx, dy = physical_space.create_grid(
+            [-5, 5], [-1, 1], 5, 3
+        )
+        self.assertSequenceEqual(
+            coords[:, 0].tolist(),
+            [-5, -2.5, 0, 2.5, 5, -5, -2.5, 0, 2.5, 5, -5, -2.5, 0, 2.5, 5],
+        )
+        self.assertSequenceEqual(
+            coords[:, 1].tolist(), [-1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
+        )
+        self.assertSequenceEqual(
+            elements.tolist(),
+            [
+                [0, 1, 5, 6],
+                [1, 2, 6, 7],
+                [2, 3, 7, 8],
+                [3, 4, 8, 9],
+                [5, 6, 10, 11],
+                [6, 7, 11, 12],
+                [7, 8, 12, 13],
+                [8, 9, 13, 14],
+            ],
+        )
+        self.assertSequenceEqual(
+            (x.tolist(), y.tolist()),
+            (
+                np.linspace(-5, 5, 5, endpoint=True).tolist(),
+                np.linspace(-1, 1, 3, endpoint=True).tolist(),
+            ),
+        )
         self.assertEqual(dx, 2.5)
         self.assertEqual(dy, 1)
 

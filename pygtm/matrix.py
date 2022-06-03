@@ -42,7 +42,7 @@ class matrix_space:
             P: transition matrix
             M: number of particles per bins at time t
         """
-        # Function to evaluate the transition Matrix        
+        # Function to evaluate the transition Matrix
         # For each elements id [1:N]
         # B[id] stores the index of all particles in this bin at time t0
         idel = self.domain.find_element(data.x0, data.y0)
@@ -52,17 +52,20 @@ class matrix_space:
                 self.B[idel[i]].append(i)
 
         # exclude bins inside domain where no particle visited
-        self.B = np.asarray(self.B, dtype='object')
+        self.B = np.asarray(self.B, dtype="object")
         keep = self.B.astype(bool)
 
         # print('Domain contains %g bins. (%g bins were removed)' % (sum(keep), len(self.B) - sum(keep)))
-        self.B, self.domain.bins, self.domain.id_og = tools.filter_vector([self.B, self.domain.bins, self.domain.id_og],
-                                                                          keep)
+        self.B, self.domain.bins, self.domain.id_og = tools.filter_vector(
+            [self.B, self.domain.bins, self.domain.id_og], keep
+        )
         self.N = len(self.domain.bins)
 
         # Fill-in Transition Matrix P
         # transition probabilities from (to) element i are stored in P[i,:] (P[:,i])
-        self.M = np.array([len(x) for x in self.B])  # number of particles per bin at time t0
+        self.M = np.array(
+            [len(x) for x in self.B]
+        )  # number of particles per bin at time t0
         self.P = np.zeros((self.N, self.N))
         for i in range(0, self.N):
             # get elements of all particles in bins B[i] at the final time (-1 when outside of domain)
@@ -105,14 +108,30 @@ class matrix_space:
             None
         """
         d = self.domain
-        in_domain = np.all((data.x0 >= d.lon[0], data.x0 <= d.lon[1],
-                            data.y0 >= d.lat[0], data.y0 <= d.lat[1]), axis=0)
-        coming_in = np.all((~in_domain,
-                            data.xt >= d.lon[0], data.xt <= d.lon[1],
-                            data.yt >= d.lat[0], data.yt <= d.lat[1]), axis=0)
+        in_domain = np.all(
+            (
+                data.x0 >= d.lon[0],
+                data.x0 <= d.lon[1],
+                data.y0 >= d.lat[0],
+                data.y0 <= d.lat[1],
+            ),
+            axis=0,
+        )
+        coming_in = np.all(
+            (
+                ~in_domain,
+                data.xt >= d.lon[0],
+                data.xt <= d.lon[1],
+                data.yt >= d.lat[0],
+                data.yt <= d.lat[1],
+            ),
+            axis=0,
+        )
 
         # where particles are coming in
-        idel = d.find_element(data.xt[np.where(coming_in)], data.yt[np.where(coming_in)])
+        idel = d.find_element(
+            data.xt[np.where(coming_in)], data.yt[np.where(coming_in)]
+        )
         if idel.size:
             fi = np.bincount(idel[idel > -1], minlength=self.N)
             self.fi = fi / np.sum(fi)
@@ -128,7 +147,7 @@ class matrix_space:
         """
         # a set of nodes is consider strongly connected if there
         # is a connection between each pair of nodes in the set
-        _, self.ccs = connected_components(self.P, directed=True, connection='strong')
+        _, self.ccs = connected_components(self.P, directed=True, connection="strong")
         _, components_count = np.unique(self.ccs, return_counts=True)
         self.largest_cc = np.where(self.ccs == np.argmax(components_count))[0]
 
@@ -161,7 +180,7 @@ class matrix_space:
         if n is None:
             d, v = sla.eig(m)  # all eigenvectors
         else:
-            d, v = ssla.eigs(m, n, which='LM')
+            d, v = ssla.eigs(m, n, which="LM")
 
         # ordered eigenvectors in descending order
         perm = d.argsort()[::-1]
@@ -261,13 +280,13 @@ class matrix_space:
         return c
 
     def hitting_time(self, target):
-        '''
+        """
         Calculate hitting time from P matrix and a subset element list
         Args:
             target: bin indices in the zone to hit
         Returns:
             array [N]: hitting time
-        '''
+        """
         #  The hitting time of set A is equal to the residence time
         # of set B, with B set as the completent of set A
         diff_target = np.setdiff1d(np.arange(0, len(self.P)), target)

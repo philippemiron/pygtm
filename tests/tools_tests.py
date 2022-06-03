@@ -3,7 +3,7 @@ from unittest import TestCase
 import numpy as np
 from pygtm.tools import ismember, filter_vector
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
 
 

@@ -135,7 +135,9 @@ class trajectory:
 
                 if len(idc) == 0:
                     # normally interpolate the whole trajectories
-                    t_i, x_i, y_i = self.trajectory_interpolation(t_j, xd, yd, oversampling)
+                    t_i, x_i, y_i = self.trajectory_interpolation(
+                        t_j, xd, yd, oversampling
+                    )
                 else:
                     # the drifter is crossing ±180 meridian
                     t_i = np.empty(0)
@@ -179,14 +181,32 @@ class trajectory:
                             r1 = self.intersection_ratio(self.x[prev_p], xs[0])
                             r2 = self.intersection_ratio(xs[-1], self.x[next_p])
                             # add values at 180°
-                            xs = np.insert(xs, [0, len(xs)], [np.sign(xs[0]) * 180, np.sign(xs[-1]) * 180])
-                            ys = np.insert(ys, [0, len(ys)],
-                                           [ys[0] - (1 - r1) * diff_y[prev_p], ys[-1] + r2 * diff_y[next_p - 1]])
-                            ts = np.insert(ts, [0, len(ts)],
-                                           [ts[0] - (1 - r1) * diff_t[prev_p], ts[-1] + r2 * diff_t[next_p - 1]])
+                            xs = np.insert(
+                                xs,
+                                [0, len(xs)],
+                                [np.sign(xs[0]) * 180, np.sign(xs[-1]) * 180],
+                            )
+                            ys = np.insert(
+                                ys,
+                                [0, len(ys)],
+                                [
+                                    ys[0] - (1 - r1) * diff_y[prev_p],
+                                    ys[-1] + r2 * diff_y[next_p - 1],
+                                ],
+                            )
+                            ts = np.insert(
+                                ts,
+                                [0, len(ts)],
+                                [
+                                    ts[0] - (1 - r1) * diff_t[prev_p],
+                                    ts[-1] + r2 * diff_t[next_p - 1],
+                                ],
+                            )
 
                         # interpolate and add the list for this trajectory
-                        tsi, xsi, ysi = self.trajectory_interpolation(ts, xs, ys, oversampling)
+                        tsi, xsi, ysi = self.trajectory_interpolation(
+                            ts, xs, ys, oversampling
+                        )
                         x_i = np.append(x_i, xsi)
                         y_i = np.append(y_i, ysi)
                         t_i = np.append(t_i, tsi)
@@ -194,10 +214,10 @@ class trajectory:
                 # add segments points to global list
                 length = len(x_i) - offset
                 if x_i.size:
-                    x0[ptr:ptr + length] = x_i[0:-offset]
-                    y0[ptr:ptr + length] = y_i[0:-offset]
-                    xt[ptr:ptr + length] = x_i[offset:]
-                    yt[ptr:ptr + length] = y_i[offset:]
+                    x0[ptr : ptr + length] = x_i[0:-offset]
+                    y0[ptr : ptr + length] = y_i[0:-offset]
+                    xt[ptr : ptr + length] = x_i[offset:]
+                    yt[ptr : ptr + length] = y_i[offset:]
                     ptr += length
 
         x0 = x0[:ptr]
@@ -249,7 +269,7 @@ class trajectory:
 
         segs = np.empty((0, 2, 2))
         segs_t = np.empty(0)
-        segs_ind = np.zeros((0, 2), dtype='int')
+        segs_ind = np.zeros((0, 2), dtype="int")
         for j in range(0, len(I) - 1):
             range_j = np.arange(I[j] + 1, I[j + 1] + 1)
             xd = self.x[range_j]
@@ -258,7 +278,14 @@ class trajectory:
 
             # keep trajectory inside the specific domain and time frame
             keep = np.logical_and.reduce(
-                (xd >= x_range[0], xd <= x_range[1], yd >= y_range[0], yd <= y_range[1], td >= t_range[0], td <= t_range[1])
+                (
+                    xd >= x_range[0],
+                    xd <= x_range[1],
+                    yd >= y_range[0],
+                    yd <= y_range[1],
+                    td >= t_range[0],
+                    td <= t_range[1],
+                )
             )
 
             if np.sum(keep) > 1:
@@ -274,7 +301,9 @@ class trajectory:
                 if len(xd) > 1:
                     # search for trajectories crossing the ±180
                     cross_world = np.where(np.diff(np.sign(xd)))[0]
-                    cross_world = np.unique(np.insert(cross_world, [0, len(cross_world)], [-1, len(xd) - 1]))
+                    cross_world = np.unique(
+                        np.insert(cross_world, [0, len(cross_world)], [-1, len(xd) - 1])
+                    )
 
                     for k in range(0, len(cross_world) - 1):
                         ind = np.arange(cross_world[k] + 1, cross_world[k + 1] + 1)
@@ -285,11 +314,18 @@ class trajectory:
                             segs_i = np.concatenate([pts[:-1], pts[1:]], axis=1)
 
                             if len(segs_i) > 1:
-                                segs_t_i = np.convolve(td, np.repeat(1.0, 2) / 2, 'valid')  # average per segment
+                                segs_t_i = np.convolve(
+                                    td, np.repeat(1.0, 2) / 2, "valid"
+                                )  # average per segment
                             else:
                                 segs_t_i = td
 
-                            segs_ind = np.vstack((segs_ind, np.array([len(segs), len(segs)+len(segs_i)])))
+                            segs_ind = np.vstack(
+                                (
+                                    segs_ind,
+                                    np.array([len(segs), len(segs) + len(segs_i)]),
+                                )
+                            )
                             segs = np.concatenate((segs, segs_i), axis=0)
                             segs_t = np.concatenate((segs_t, segs_t_i), axis=0)
         return segs, segs_t, segs_ind
