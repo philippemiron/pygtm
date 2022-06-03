@@ -15,12 +15,12 @@ on:
 jobs:
   ci-pygtm:
     name: 'test'
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu"]
-        python-version: ["3.9"]
+        os: ["ubuntu-latest"]
+        python-version: ["3.9", "3.10"]
     steps:
       - uses: actions/checkout@v2
       - uses: conda-incubator/setup-miniconda@v2.1.1
@@ -30,14 +30,6 @@ jobs:
           mamba-version: "*"
           channels: conda-forge,defaults
           channel-priority: true
-
-      - shell: bash -l {0}
-        run: |
-          conda info
-          conda list
-          conda config --show-sources
-          conda config --show
-          printenv | sort
       - name: Unit testing
         working-directory: /home/runner/work/pygtm/
-        run: python -m unittest discover tests/*.py
+        run: python -m unittest discover -s tests -p "*.py"
