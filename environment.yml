@@ -9,4 +9,3 @@ dependencies:
   - scikit-learn
   - netCDF4
   - cmocean
-  - unittest
