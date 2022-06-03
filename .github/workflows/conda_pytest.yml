@@ -31,4 +31,6 @@ jobs:
           channels: conda-forge,defaults
           channel-priority: true
       - name: Unit testing
-        run: python -m unittest discover -s tests -p "*.py"
+        run: |
+        conda activate pygtm
+        python -m unittest discover -s tests -p "*.py"
