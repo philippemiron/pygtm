@@ -40,4 +40,4 @@ jobs:
           printenv | sort
       - name: Unit testing
         working-directory: /home/runner/work/pygtm/
-        run: python -m unittest discover tests
+        run: python -m unittest discover tests/*.py
