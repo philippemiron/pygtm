@@ -40,5 +40,4 @@ jobs:
           printenv | sort
       - name: Unit testing
         working-directory: /home/runner/work/pygtm/
-        run: |
-         $CONDA/envs/pygtm/bin/python -m unittest tests/dataset_tests.py tests/physical_tests.py tests/tool_tests.py
+        run: python -m unittest discover tests
