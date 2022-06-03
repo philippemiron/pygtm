@@ -14,24 +14,23 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   ci-pygtm:
-    name: Ex10 (${{ matrix.os }}, Mambaforge)
-    runs-on: ${{ matrix.os }}-latest
+    name: 'test'
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu"]
-        python-version: [3.9"]
-        include:
-          - environment-file: environment.yml
+        os: ["ubuntu-latest"]
+        python-version: ["3.9"]
     steps:
       - uses: actions/checkout@v2
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v2.1.1
         with:
-          environment-file: ${{ matrix.environment-file }}
-          use-mamba: true
-
+          activate-environment: pygtm
+          environment-file: environment.yml
+          mamba-version: "*"
+          channels: conda-forge,defaults
+          channel-priority: true
       - name: Unit testing
-        working-directory: /home/runner/work/pygtm/
+        shell: bash -l {0}
         run: |
-         $CONDA/bin/activate pygtm
-         $CONDA/envs/pygtm/bin/python -m pytest tests/*.py
+              python -m unittest discover -s tests -p "*.py"
