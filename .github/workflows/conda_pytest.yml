@@ -32,5 +32,4 @@ jobs:
           channel-priority: true
       - name: Unit testing
         run: |
-              conda activate pygtm
-              python -m unittest discover -s tests -p "*.py"
+              $CONDA/bin/python -m unittest discover -s tests -p "*.py"
