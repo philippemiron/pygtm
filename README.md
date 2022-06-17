@@ -11,6 +11,8 @@
 - tests/: Unit tests
 
 ### Used in the following Publications
+- Arrival of New Great Salinity Anomaly Weakens Convection in the Irminger Sea,
+T. C. Biló, F. Straneo, J. Holte, I. A.-A. Le Bras, 2022, [link](https://doi.org/10.1029/2022GL098857)
 - Transition paths of North Atlantic Deep Water, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, 2021, [link](https://doi.org/10.1175/JTECH-D-22-0022.1)
 - Surface pathways connecting the South and North Atlantic Oceans, K.L. Drouin, M.S. Lozier, F.J. Beron-Vera, P. Miron, and M.J. Olascoaga, Preprint, 2021
 - Influence of the Loop Current on the Gulf of Mexico connectivity, P. Miron, TBD
