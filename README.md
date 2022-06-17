@@ -1,5 +1,6 @@
 # pygtm : a python Geospatial Transition Matrix toolbox
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5781356.svg)](https://doi.org/10.5281/zenodo.5781356)
 ![CI](https://github.com/philippemiron/pygtm/workflows/CI/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/geophysical-transition-matrix/badge/?version=latest)](https://geophysical-transition-matrix.readthedocs.io/en/latest/?badge=latest)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/philippemiron/pygtm/main?filepath=tutorials%2F)
@@ -12,11 +13,11 @@
 
 ### Used in the following Publications
 - Arrival of New Great Salinity Anomaly Weakens Convection in the Irminger Sea,
-T. C. Biló, F. Straneo, J. Holte, I. A.-A. Le Bras, 2022, [link](https://doi.org/10.1029/2022GL098857)
-- Transition paths of North Atlantic Deep Water, P. Miron, F.J. Beron-Vera, M.J. Olascoaga, 2021, [link](https://doi.org/10.1175/JTECH-D-22-0022.1)
-- Surface pathways connecting the South and North Atlantic Oceans, K.L. Drouin, M.S. Lozier, F.J. Beron-Vera, P. Miron, and M.J. Olascoaga, Preprint, 2021
+T. C. Biló, F. Straneo, J. Holte, I. A.-A. Le Bras, Geophysical Research Letters, 2022, [link](https://doi.org/10.1029/2022GL098857)
+- Transition paths of North Atlantic Deep Water, P. Miron, F. J. Beron-Vera, M. J. Olascoaga, Journal of Atmospheric and Oceanic Technology, 2022, [link](https://doi.org/10.1175/JTECH-D-22-0022.1)
+- Surface pathways connecting the South and North Atlantic Oceans, K. L. Drouin, M. S. Lozier, F. J. Beron-Vera, P. Miron, and M. J. Olascoaga, Geophysical Research Letters, 2021, [link](https://doi.org/10.1029/2021GL096646)
 - Influence of the Loop Current on the Gulf of Mexico connectivity, P. Miron, TBD
-- Transition paths of marine debris and the stability of the garbage patches, P. Miron, F.J. Beron-Vera, L. Helfmann, and P. Koltai, Chaos: An Interdisciplinary Journal of Nonlinear Science, 2021, [link](https://aip.scitation.org/doi/10.1063/5.0030535)
+- Transition paths of marine debris and the stability of the garbage patches, P. Miron, F. J. Beron-Vera, L. Helfmann, and P. Koltai, Chaos: An Interdisciplinary Journal of Nonlinear Science, 2021, [link](https://aip.scitation.org/doi/10.1063/5.0030535)
 - Markov-chain-inspired search for MH370, P. Miron, F. J. Beron-Vera, M. J. Olascoaga and P. Koltai, Chaos: An Interdisciplinary Journal of Nonlinear Science, 2020, [link](https://aip.scitation.org/doi/10.1063/1.5092132)
 - Lagrangian geography of the deep Gulf of Mexico, P. Miron, F. J. Beron-Vera, M. J. Olascoaga, and G. Froyland, Journal of Physical Oceanography, 2018, [link](https://journals.ametsoc.org/doi/10.1175/JPO-D-18-0073.1)
 - Connectivity of Pulley Ridge with remote locations as inferred from satellite-tracked drifter trajectories, M. J. Olascoaga, P. Miron, C. Paris, P. Pérez-Brunius, R. Pérez-Portela, R. H. Smith and A. Vaz, Journal of Geophysical Research, 2018, [link](https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2018JC014057)
