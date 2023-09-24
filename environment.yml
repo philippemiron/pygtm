@@ -5,7 +5,7 @@ dependencies:
   - cartopy
   - numpy
   - scipy
-  - matplotlib
+  - matplotlib-base
   - scikit-learn
   - netCDF4
   - cmocean
