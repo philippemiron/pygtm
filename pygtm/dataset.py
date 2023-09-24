@@ -4,7 +4,6 @@ from scipy.interpolate import interp1d
 
 class trajectory:
     def __init__(self, x, y, t, ids):
-
         # store trajectory data
         self.x = x
         self.y = y
