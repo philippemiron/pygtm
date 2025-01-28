@@ -1,7 +1,9 @@
 import unittest
 from unittest import TestCase
+
 import numpy as np
-from pygtm.tools import ismember, filter_vector
+
+from pygtm.tools import filter_vector, ismember
 
 if __name__ == "__main__":
     unittest.main()

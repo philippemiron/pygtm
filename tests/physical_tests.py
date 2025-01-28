@@ -1,6 +1,8 @@
 import unittest
 from unittest import TestCase
+
 import numpy as np
+
 from pygtm.physical import physical_space
 
 if __name__ == "__main__":
