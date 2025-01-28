@@ -1,3 +1,5 @@
+"""Module containing the Transition Path Theory class."""
+
 import numpy as np
 
 
@@ -13,10 +15,11 @@ class path_theory:
         self.yB = np.mean(d.coords[d.bins, 1], 1)
 
     def committors(self, ind_a, ind_b):
-        """
-        Evaluate the forward committor which is the probability of starting from source set
-        (ind_a) to reach the target set (ind_b) and the backward committor which probability
-        in backward time to start at the target and reach the source
+        """Evaluate the forward and backward committor.
+
+        The forward committor which is the probability of starting from source set
+        (ind_a) to reach the target set (ind_b) and the backward committor which
+        probability in backward time to start at the target and reach the source
 
         Args:
             ind_a: array of indices of the source
@@ -25,8 +28,8 @@ class path_theory:
         Returns:
             q_b: backward committor
             q_f: forward committor
-        """
 
+        """
         # indices of the domain \ (target and source)
         ind_c = np.setdiff1d(np.arange(0, self.N), np.union1d(ind_a, ind_b))
 
@@ -66,8 +69,7 @@ class path_theory:
         return q_b, q_f
 
     def reactive_trajectories_current(self, q_b, q_f):
-        """
-        Evaluate the reactive trajectories from the forward and backward committor
+        """Evaluate the reactive trajectories from the forward and backward committor.
 
         Args:
             q_b: array backward committor
@@ -77,6 +79,7 @@ class path_theory:
             f: matrix of the reactive current from and to all bins of the domain
             fx: array [N] x-direction of the current for each bin
             fy: array [N] y-direction of the current for each bin
+
         """
         # reactive current
         # f = q_i^+ P_ij q_j^+ p_i
@@ -111,8 +114,7 @@ class path_theory:
         return f, fx, fy
 
     def reactive_trajectories_properties(self, q_b, q_f, f, ind_a, ind_b):
-        """
-        Evaluate the density, rate and expected time of reactive trajectories
+        """Evaluate the density, rate and expected time of reactive trajectories.
 
         Args:
             q_b: array backward committor

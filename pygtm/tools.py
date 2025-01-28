@@ -1,18 +1,23 @@
+"""Module containing extra tools for pygtm."""
+
 import os
 from datetime import datetime
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 from matplotlib import path
 from netCDF4 import Dataset
-from . import physical
-from . import matrix
-from . import dataset
+
+from . import dataset, matrix, physical
 
 
 def ismember(a, b):
-    """
-    Re-implementation of ismember() from Matlab but return only the second arg which is the index
+    """Re-implementation of the ismember function from Matlab.
+
+    Note that this returns only the second arg which is the index, credit to this
+    Stack Overflow thread:
     https://stackoverflow.com/questions/15864082/python-equivalent-of-matlabs-ismember-function
+
     Args:
         a: first list
         b: second list to compare
@@ -20,6 +25,7 @@ def ismember(a, b):
     Returns:
         list size of a: value is the indices in the list b (-1 if not present)
         ex: ismember([1,2,4], [1,2,3,5]) = [0, 1, -1]
+
     """
     bind = {}
     for i, elt in enumerate(b):
@@ -29,15 +35,15 @@ def ismember(a, b):
 
 
 def filter_vector(vector, keep):
-    """
-    Remove element from vector (or vectors is a list) according to a index list or boolean vector
-    vectors: Numpy array or list of Numpy array
+    """Remove element from vector according to a index list or boolean vector.
+
     Args:
         vector: array or list of arrays to filter
         keep: list of index to keep or a boolean array with the same size as vector
 
     Returns:
         outlist: filtered array or list of arrays
+
     """
     if type(vector) != list:
         return vector[keep]
@@ -49,16 +55,18 @@ def filter_vector(vector, keep):
 
 
 def bins_in_contour(d, xc, yc, return_path=False):
-    """
-    Retrieve bins located inside a contour defined by the lists xc and yc
+    """Retrieve bins located inside a contour defined by the lists xc and yc.
 
     Args:
         xc: latitude of the contour
         yc: longitude of the contour
         d: physical domain object
+        return_path: boolean to return the path object with the bins. Default False.
+
     Return:
         p: path from the (xc, yc) coordinates
         bins: list of bins inside the contour
+
     """
     p = path.Path(np.vstack((xc, yc)).T)
     bins_xy = np.where(p.contains_points(d.coords))[0]
@@ -69,16 +77,17 @@ def bins_in_contour(d, xc, yc, return_path=False):
 
 
 def segments_in_contour(data, xc, yc, segments=None):
-    """
-    Retrieve trajectory segments located inside a contour defined by (xc, yc)
+    """Retrieve trajectory segments located inside a contour defined by (xc, yc).
 
     Args:
         xc: latitude of the contour
         yc: longitude of the contour
         data: dataset object (contains x0, xt, y0, yt)
         segments ['start', 'end', None]: consider either the start, the end, or both positions of each segments
+
     Return:
         logical arrays len(data.x0)
+
     """
     p = path.Path(np.vstack((xc, yc)).T)
 
@@ -96,15 +105,17 @@ def segments_in_contour(data, xc, yc, segments=None):
 
 
 def filter_region(data, xc, yc):
-    """
-    Remove segments inside a region defined by the contour coordinates (x,y)
+    """Remove segments inside a region defined by the contour coordinates (x,y).
+
     Args:
         xc: latitude of the contour
         yc: longitude of the contour
         data: dataset object (contains x0, xt, y0, yt)
         segments ['start', 'end', None]: consider either the start, the end, or both positions of each segments
+
     Return:
         logical arrays len(data.x0)
+
     """
     rpath = path.Path(np.vstack((xc, yc)).T)
     keep = np.where(~rpath.contains_points(np.vstack((data.x0, data.y0)).T))[0]
@@ -114,8 +125,8 @@ def filter_region(data, xc, yc):
 
 
 def remove_communication(d, data, x1, y1, x2, y2):
-    """
-    Remove the connection between two regions defined by (x1, y1) and (x2, y2)
+    """Remove the connection between two regions defined by (x1, y1) and (x2, y2).
+
     The two regions have to share a common edge, e.g. two regions: Atlantic and
     Pacific oceans with a common intersection at the Isthmus of Panama
 
@@ -124,6 +135,7 @@ def remove_communication(d, data, x1, y1, x2, y2):
         data: dataset object (contains x0, xt, y0, yt)
         (x1, y1): close contour defining first region
         (x2, y2): close contour defining second region
+
     """
     # bins first and second region
     bins_r1 = bins_in_contour(d, x1, y1)
@@ -158,10 +170,7 @@ def remove_communication(d, data, x1, y1, x2, y2):
 
 
 def remove_panama_communication(d, data):
-    """
-    Function that call remove_communication_two_regions for a specific case
-    with predefined region boundaries
-    """
+    """Remove the communication across the Panama Canal."""
     # Isthmus of Panama
     x_po = np.array([-105, -105, -100.5, -85.5, -83, -81, -79.5, -77.5, -75, -70, -105])
     y_po = np.array([0, 25, 20, 13, 9, 8.25, 9.25, 8.5, 6, 0, 0])
@@ -171,10 +180,7 @@ def remove_panama_communication(d, data):
 
 
 def remove_indonesia_communication(d, data):
-    """
-    Function that call remove_communication_two_regions for a specific case
-    with predefined region boundaries
-    """
+    """Remove the communication across Indonesia."""
     # Maritime continent
     x_io = np.array(
         [99, 99, 98.8, 102, 103.5, 103.5, 107.5, 114, 120, 127, 138, 138, 99]
@@ -189,13 +195,14 @@ def remove_indonesia_communication(d, data):
     remove_communication(d, data, x_io, y_io, x_po, y_po)
 
 
-def restrict_to_subregion(data, tm, region):
-    """Extract a subregion from the global transition matrix
+def restrict_to_subregion(data, tm, region) -> None:
+    """Extract a subregion from the global transition matrix.
 
     Args:
         data: dataset object (contains x0, xt, y0, yt)
         tm: transition matrix object
         region: ['Atlantic Ocean', 'Atlantic Ocean extended', 'Pacific Ocean', 'Indian Ocean']
+
     """
     if region == "Atlantic Ocean":
         xr = np.array(
@@ -317,8 +324,7 @@ def restrict_to_subregion(data, tm, region):
 
 
 def export_nc(filename, data, mat, nirvana_state=False, debug=False):
-    """
-    Output calculation to netCDF file
+    """Output calculation to netCDF file.
 
     Args:
         filename: netCDF output file
@@ -327,7 +333,9 @@ def export_nc(filename, data, mat, nirvana_state=False, debug=False):
         mat: transition matrix's object
         nirvana_state: if a nirvana state is present in the transition matrix
         debug: read and print the output file after writing to disk
+
     Returns: None
+
     """
     # segments data
     T = data.T
@@ -499,16 +507,17 @@ def export_nc(filename, data, mat, nirvana_state=False, debug=False):
 
 
 def import_nc(filename):
-    """
-    Import and recreate the pygtm objects from an outputed file (using export_nc)
+    """Import and recreate the pygtm objects from an outputed file (using export_nc).
+
     Args:
         filename: netCDF input file
+
     Output:
         data: trajectory's object
         dom: physical domain's object
         mat: transition matrix's object
-    """
 
+    """
     # open file
     filename = os.path.expanduser(filename)
     f = Dataset(filename, "r")
@@ -553,7 +562,7 @@ def import_nc(filename):
     for i in range(0, len(mat.M)):
         mat.B.append(Bv[j : j + mat.M[i]])
         j = j + mat.M[i]
-    mat.B = np.asarray(mat.B)
+    mat.B = np.asarray(mat.B, dtype=object)
     f.close()
 
     return data, dom, mat

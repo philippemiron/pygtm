@@ -1,11 +1,14 @@
-from pygtm import tools
+"""Module to calculate the transition matrix and its properties."""
+
 import numpy as np
 import scipy as sc
 import scipy.linalg as sla
 import scipy.sparse.linalg as ssla
-from sklearn.preprocessing import maxabs_scale
 from scipy.sparse.csgraph import connected_components
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import maxabs_scale
+
+from pygtm import tools
 
 
 class matrix_space:
@@ -28,8 +31,8 @@ class matrix_space:
         self.ccs = None
 
     def fill_transition_matrix(self, data):
-        """
-        Calculate the transition matrix of all points (x0, y0) to (xT, yT) on grid domain.bins
+        """Calculate the transition matrix of all points of the domain.
+
         Args:
             data: object containing initial and final points of trajectories segments
                 data.x0: array longitude of segment initial points
@@ -41,6 +44,7 @@ class matrix_space:
             B: containing particles at initial time for each bin
             P: transition matrix
             M: number of particles per bins at time t
+
         """
         # Function to evaluate the transition Matrix
         # For each elements id [1:N]
@@ -99,13 +103,14 @@ class matrix_space:
         return
 
     def transition_matrix_extras(self, data):
-        """
-        Miscellaneous operations perform after the calculations of the transition matrix
+        """Miscellaneous operations perform after the calculations of the transition matrix.
+
         Args:
             data: trajectory object
 
         Returns:
             None
+
         """
         d = self.domain
         in_domain = np.all(
@@ -142,9 +147,7 @@ class matrix_space:
         self.fo = 1 - np.sum(self.P, 1)
 
     def largest_connected_components(self):
-        """
-        Restrict the matrix to the strongly connected components
-        """
+        """Restrict the matrix to the strongly connected components."""
         # a set of nodes is consider strongly connected if there
         # is a connection between each pair of nodes in the set
         _, self.ccs = connected_components(self.P, directed=True, connection="strong")
@@ -167,8 +170,8 @@ class matrix_space:
 
     @staticmethod
     def eigenvectors(m, n):
-        """
-        Calculate n real eigenvalues and eigenvectors of the matrix mat
+        """Calculate n real eigenvalues and eigenvectors of the matrix mat.
+
         Args:
             m: square matrix
             n: number of eigenvalues and eigenvectors to calculate
@@ -176,6 +179,7 @@ class matrix_space:
         Returns:
             d: top n real eigenvalues in descending order
             v: top n eigenvectors associated with eigenvalues d
+
         """
         if n is None:
             d, v = sla.eig(m)  # all eigenvectors
@@ -195,8 +199,8 @@ class matrix_space:
         return d, v
 
     def left_and_right_eigenvectors(self, n=None):
-        """
-        Function to call eigenvectors() for left and right calculations
+        """Call eigenvectors for left and right calculations.
+
         Args:
             n: number of eigenvectors to calculate (default all)
 
@@ -205,19 +209,21 @@ class matrix_space:
             eigL: left eigenvalues (equal to eigR in our case)
             R: right eigenvectors
             L: left eigenvectors
+
         """
         self.eigR, self.R = self.eigenvectors(self.P, n)
         self.eigL, self.L = self.eigenvectors(np.transpose(self.P), n)
 
     def lagrangian_geography(self, selected_vec, n_clusters):
-        """
-        Cluster the eigenvectors to evaluate the Lagrangian Geography
+        """Cluster the eigenvectors to evaluate the Lagrangian Geography.
+
         Args:
             selected_vec: list of selected eigenvectors
             n_clusters: number of clusters
 
         Returns:
             model.labels_: array corresponding to the cluster associated with each bin
+
         """
         vectors_geo = self.R[:, selected_vec]
         model = KMeans(n_clusters=n_clusters, random_state=1).fit(vectors_geo)
@@ -225,14 +231,15 @@ class matrix_space:
         return model.labels_
 
     def push_forward(self, d0, exp):
-        """
-        Dispersion of a initial distribution
+        """Dispersion of a initial distribution.
+
         Args:
             d0: initial distribution
             exp: proportional to the time to evolve the density (time = exp*T)
 
         Returns:
             d: evolved density at t0 + exp*T
+
         """
         # for loop is faster than using matrix_power() with big matrix
         d = np.copy(d0)
@@ -241,13 +248,14 @@ class matrix_space:
         return d
 
     def matrix_to_graph(self, mat=None):
-        """
-        Transform the transition matrix into a graph
+        """Transform the transition matrix into a graph.
+
         Args:
             mat: transition matrix
 
         Returns:
             graph: dictionary where each key is a node and the values are its connection(s)
+
         """
         graph = {}
 
@@ -264,12 +272,14 @@ class matrix_space:
         return graph
 
     def residence_time(self, target):
-        """
-        Calculate residence time from P matrix and a subset element list
+        """Calculate residence time from P matrix and a subset element list.
+
         Args:
             target: bin indices in the zone of interest
+
         Returns:
             array [N]: residence time
+
         """
         c = np.zeros(len(self.P))
         a = sc.sparse.eye(len(target)) - self.P[np.ix_(target, target)]
@@ -280,12 +290,14 @@ class matrix_space:
         return c
 
     def hitting_time(self, target):
-        """
-        Calculate hitting time from P matrix and a subset element list
+        """Calculate hitting time from P matrix and a subset element list.
+
         Args:
             target: bin indices in the zone to hit
+
         Returns:
             array [N]: hitting time
+
         """
         #  The hitting time of set A is equal to the residence time
         # of set B, with B set as the completent of set A

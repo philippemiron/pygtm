@@ -1,3 +1,5 @@
+"""Module containing the trajectory class."""
+
 import numpy as np
 from scipy.interpolate import interp1d
 
@@ -17,13 +19,14 @@ class trajectory:
 
     @staticmethod
     def monotonic(x):
-        """
-        Test if an array is in a monotonic order
+        """Test if an array is in a monotonic order.
+
         Args:
             x: array
 
         Returns:
             True or False
+
         """
         # True if array is monotonic.
         # monotonic(X) returns True (False) if X is (not) monotonic.
@@ -41,8 +44,8 @@ class trajectory:
 
     @staticmethod
     def trajectory_interpolation(t, x, y, s):
-        """
-        Interpolation function x(t), y(t) describe the locations at time t of a trajectory
+        """Interpolation function x(t), y(t) describe the locations at time t of a trajectory.
+
         Args:
             t: time t of a trajectory
             x: longitude of the trajectory
@@ -53,6 +56,7 @@ class trajectory:
             ti: time of the interpolated trajectory
             fx(ti): longitude of the trajectory at the interpolated time
             fy(ti): latitude of the trajectory at the interpolated time
+
         """
         # interpolation functions
         fx = interp1d(t, x)
@@ -65,14 +69,15 @@ class trajectory:
 
     @staticmethod
     def intersection_ratio(x1, x2):
-        """
-        Function used to interpolate trajectories at the ±180 meridian
+        """Interpolate trajectories at the ±180 meridian.
+
         Args:
             x1: longitude on one side of the ±180 meridian
             x2: longitude on the other side of the ±180 meridian
 
         Returns:
             the ratio between x1 and ±180 meridian over x1 and x2
+
         """
         if x1 < 0:
             return (x1 + 180) / (360 - np.abs(x1 - x2))
@@ -80,8 +85,8 @@ class trajectory:
             return (180 - x1) / (360 - np.abs(x1 - x2))
 
     def create_segments(self, T):
-        """
-        Subdivide full trajectories into a list of segments of T days
+        """Subdivide full trajectories into a list of segments of T days.
+
         Args:
             T: transition time
 
@@ -237,8 +242,8 @@ class trajectory:
             self.yt = y0
 
     def filtering(self, x_range=None, y_range=None, t_range=None, complete_track=True):
-        """
-        Returns trajectory in a spatial domain and/or temporal range
+        """Filter trajectory in a spatial domain and/or temporal range.
+
         Args:
             x_range: longitudinal range (ascending order)
             y_range: meridional range (ascending order)
@@ -254,6 +259,7 @@ class trajectory:
             segs_t [Ns]: time associated to each segments
             segs_ind [Nt,2]: indices of the first and last segment of a trajectory
                      ex: trajectory 0 contains the segs[segs_ind[0,0]:segs_ind[0,1]]
+
         """
         if x_range is None:
             x_range = [np.min(self.x), np.max(self.x)]
