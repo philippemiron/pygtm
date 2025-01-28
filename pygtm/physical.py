@@ -1,9 +1,10 @@
-from pygtm import tools
+"""Module containing the physical space class."""
+
 import numpy as np
-import cartopy.crs as ccrs
-from cartopy.mpl.geoaxes import GeoAxes
-from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
+from matplotlib.patches import Rectangle
+
+from pygtm import tools
 
 
 class physical_space:
@@ -34,10 +35,8 @@ class physical_space:
 
     @staticmethod
     def uniform_grid(lon, lat, size):
-        """
-        From a size parameters and the dimensions of the domain this
-        function returns the number of bins in x-y direction to have
-        bins as square as possible.
+        """Return the number of bins in x-y direction to have bins as square as possible.
+
         Args:
             lon: list with limits of the boundaries in the zonal direction
             lat: list with limits of the boundaries in the meridional direction
@@ -59,8 +58,8 @@ class physical_space:
 
     @staticmethod
     def create_grid(lon, lat, nx, ny):
-        """
-        From two vectors x-y, this function creates a structured regular grid
+        """From two vectors x-y, this function creates a structured regular grid.
+
         Args:
             lon: list with limits of the boundaries in the zonal direction
             lat: list with limits of the boundaries in the meridional direction
@@ -75,6 +74,7 @@ class physical_space:
             y: vector of coordinates in the meridional direction
             dx: size of the zonal grid
             dy: size of the meridional grid
+
         """
         x = np.linspace(lon[0], lon[1], num=nx, endpoint=True)
         y = np.linspace(lat[0], lat[1], num=ny, endpoint=True)
@@ -93,14 +93,15 @@ class physical_space:
         return coords, bins, x, y, dx, dy
 
     def find_element(self, x, y):
-        """
-        Find element(s) where the point(s) defined by x-y is(are) located
+        """Find element(s) where the point(s) defined by x-y is(are) located.
+
         Args:
             x: longitude(s) of point to search
             y: latitude(s) of point to search
 
         Returns:
             el_list: element number where the point(s) (x_i, y_i) is(are) located
+
         """
         # left: a[i - 1] < v <= a[i]
         id_i = np.searchsorted(self.vy, y, side="left") - 1
@@ -136,11 +137,13 @@ class physical_space:
         return el_list
 
     def vector_to_matrix(self, vector):
-        """
-        The vector contains value at elements of the domain and not on land this function convert the vector
-         (or list of vectors) to a matrix that can be plot with pcolormesh(), contourf() or other similar functions.
+        """Transform the matrix data to a vector to use for plotting.
+
+        The returned vector can be used with pcolormesh, contourf, etc.
+
         Args:
             vector:  Numpy array or list of Numpy array
+
         """
         # we remove nirvana state if present
         if len(vector) == len(self.bins) + 1:
@@ -151,13 +154,14 @@ class physical_space:
         return np.ma.masked_invalid(mat.reshape((self.ny - 1, self.nx - 1)))
 
     def bins_contour(self, ax, edgecolor="k", bin_id=None, projection=None):
-        """
-        Plot all element bins on one axis
+        """Plot all element bins on one axis.
+
         Args:
             ax: axis to plot on
             edgecolor: bins contour color
             bin_id: which bins to plot (default all)
             projection: add transform keyword to convert to cartopy projection
+
         """
         if bin_id is None:
             bins = self.bins
