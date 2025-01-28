@@ -1,0 +1,28 @@
+[project]
+name = "pygtm"
+version = "0.1.0"
+description = "Python Geophysical Transition Matrix"
+authors = [
+     {name = "Philippe Miron", email = "pmiron@fsu.edu"}
+]
+readme = "README.md"
+license = "GPL-3.0-or-later"
+requires-python = ">=3.10"
+dependencies = [
+    "cartopy>=0.24.1",
+    "cmocean>=4.0.3",
+    "matplotlib>=3.10.0",
+    "netcdf4>=1.7.2",
+    "numpy>=2.2.2",
+    "scikit-learn>=1.6.1",
+    "scipy>=1.15.1",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+    "ruff>=0.9.3",
+]
+
+[tool.ruff.lint]
+select = ["D", "E", "F", "I"]
