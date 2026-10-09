@@ -13,3 +13,9 @@ docs/_templates/
 
 # this will eventually be public
 publications/
+publications_onedrive/
+
+# python build
+*.egg-info/
+build/
+dist/

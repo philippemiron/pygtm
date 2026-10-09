@@ -45,7 +45,7 @@ def filter_vector(vector, keep):
         outlist: filtered array or list of arrays
 
     """
-    if type(vector) != list:
+    if not isinstance(vector, list):
         return vector[keep]
     else:
         outlist = []
@@ -80,10 +80,11 @@ def segments_in_contour(data, xc, yc, segments=None):
     """Retrieve trajectory segments located inside a contour defined by (xc, yc).
 
     Args:
+        data: dataset object (contains x0, xt, y0, yt)
         xc: latitude of the contour
         yc: longitude of the contour
-        data: dataset object (contains x0, xt, y0, yt)
-        segments ['start', 'end', None]: consider either the start, the end, or both positions of each segments
+        segments: ['start', 'end', None] consider either the start,
+            the end, or both positions of each segments
 
     Return:
         logical arrays len(data.x0)
@@ -108,10 +109,9 @@ def filter_region(data, xc, yc):
     """Remove segments inside a region defined by the contour coordinates (x,y).
 
     Args:
+        data: dataset object (contains x0, xt, y0, yt)
         xc: latitude of the contour
         yc: longitude of the contour
-        data: dataset object (contains x0, xt, y0, yt)
-        segments ['start', 'end', None]: consider either the start, the end, or both positions of each segments
 
     Return:
         logical arrays len(data.x0)
@@ -133,8 +133,10 @@ def remove_communication(d, data, x1, y1, x2, y2):
     Args:
         d: physical domain object
         data: dataset object (contains x0, xt, y0, yt)
-        (x1, y1): close contour defining first region
-        (x2, y2): close contour defining second region
+        x1: closed contour x-coordinates defining first region
+        y1: closed contour y-coordinates defining first region
+        x2: closed contour x-coordinates defining second region
+        y2: closed contour y-coordinates defining second region
 
     """
     # bins first and second region
@@ -201,7 +203,8 @@ def restrict_to_subregion(data, tm, region) -> None:
     Args:
         data: dataset object (contains x0, xt, y0, yt)
         tm: transition matrix object
-        region: ['Atlantic Ocean', 'Atlantic Ocean extended', 'Pacific Ocean', 'Indian Ocean']
+        region: Subregion name ('Atlantic Ocean', 'Atlantic Ocean extended',
+            'Pacific Ocean', or 'Indian Ocean').
 
     """
     if region == "Atlantic Ocean":
@@ -281,7 +284,8 @@ def restrict_to_subregion(data, tm, region) -> None:
         xyr = [[xr, yr]]
     else:
         print(
-            "Available regions are: ['Atlantic Ocean', 'Atlantic Ocean extended', 'Pacific Ocean', 'Indian Ocean']"
+            "Available regions are: ['Atlantic Ocean', "
+            "'Atlantic Ocean extended', 'Pacific Ocean', 'Indian Ocean']"
         )
         return
 

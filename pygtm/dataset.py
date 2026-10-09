@@ -5,7 +5,18 @@ from scipy.interpolate import interp1d
 
 
 class trajectory:
+    """Trajectory dataset handling, interpolation, and trajectory pairs."""
+
     def __init__(self, x, y, t, ids):
+        """Initialize trajectory dataset.
+
+        Args:
+            x: Longitude array.
+            y: Latitude array.
+            t: Time array.
+            ids: Identifier array for drifters.
+
+        """
         # store trajectory data
         self.x = x
         self.y = y
@@ -44,13 +55,13 @@ class trajectory:
 
     @staticmethod
     def trajectory_interpolation(t, x, y, s):
-        """Interpolation function x(t), y(t) describe the locations at time t of a trajectory.
+        """Interpolate trajectory locations x(t) and y(t) at time t.
 
         Args:
             t: time t of a trajectory
             x: longitude of the trajectory
             y: latitude of the trajectory
-            s: oversampling coefficient (1: daily interpolation, 2: bidaily, 12: every 2h, etc.)
+            s: Oversampling coefficient (1: daily, 2: bidaily, 12: every 2h, etc.).
 
         Returns:
             ti: time of the interpolated trajectory
@@ -101,22 +112,23 @@ class trajectory:
         oversampling = 1  # times per days
         offset = oversampling * abs(T)
 
-        # real size loop all trajectories, count total days, multiply by oversampling
-        # defined a big vector but output only 0:ptr at the end of the functions
-        # should but fine but in theory can still be too short and crash on low frequency trajectories
+        # real size loop all trajectories, count total days, multiply by
+        # oversampling; define a big vector but output only 0:ptr at the end
+        # should be fine but in theory can still be too short and crash on low
+        # frequency trajectories
         x0 = np.zeros(len(self.x) * oversampling * 20)
         y0 = np.zeros(len(self.x) * oversampling * 20)
         xt = np.zeros(len(self.x) * oversampling * 20)
         yt = np.zeros(len(self.x) * oversampling * 20)
 
         # create index where we change drifter in x,y,t
-        I = np.where(abs(np.diff(self.ids, axis=0)) > 0)[0]
-        I = np.insert(I, [0, len(I)], [-1, len(self.ids) - 1])
+        idx = np.where(abs(np.diff(self.ids, axis=0)) > 0)[0]
+        idx = np.insert(idx, [0, len(idx)], [-1, len(self.ids) - 1])
 
         # loop each trajectory
         ptr = 0
-        for j in range(0, len(I) - 1):
-            range_j = range(I[j] + 1, I[j + 1] + 1)
+        for j in range(0, len(idx) - 1):
+            range_j = range(idx[j] + 1, idx[j + 1] + 1)
             t_j = self.t[range_j]
             days = np.floor(t_j[-1] - t_j[0])
             if days >= abs(T):
@@ -130,8 +142,10 @@ class trajectory:
                     xd = xd[order]
                     yd = yd[order]
 
-                # Because we are interpolating we have to be careful when drifters cross the dateline ±180 in that case
-                # we split the trajectory into segments that we individually interpolate then put back together
+                # Because we are interpolating we have to be careful when
+                # drifters cross the dateline ±180. In that case we split the
+                # trajectory into segments that we individually interpolate
+                # then put back together
 
                 # look for ±180 crossing by finding jump in longitude larger than 180°
                 diff_x = np.diff(xd)
@@ -162,10 +176,12 @@ class trajectory:
                         next_p = ids[-1] + 1
                         prev_p = ids[0] - 1
 
-                        # If we split a trajectory into two pieces before 180° and after 180°
-                        # on the odd sections 180° is added at the end of the list
-                        # on the even sections 180° is added at the beginning of the list
-                        # three cases if we add 180° at the beginning, end or both side of the segment
+                        # If we split a trajectory into two pieces before 180°
+                        # and after 180°, on the odd sections 180° is added at
+                        # the end of the list, on the even sections 180° is
+                        # added at the beginning of the list. Three cases if we
+                        # add 180° at the beginning, end or both side of the
+                        # segment
                         if i == 0:  # first segment cross at the end
                             # find ratio between 180° and the to points that cross it
                             r = self.intersection_ratio(xs[-1], self.x[next_p])
@@ -269,14 +285,14 @@ class trajectory:
             t_range = [np.min(self.t), np.max(self.t)]
 
         # identified drifters change
-        I = np.where(abs(np.diff(self.ids, axis=0)) > 0)[0]
-        I = np.insert(I, [0, len(I)], [-1, len(self.ids) - 1])
+        idx = np.where(abs(np.diff(self.ids, axis=0)) > 0)[0]
+        idx = np.insert(idx, [0, len(idx)], [-1, len(self.ids) - 1])
 
         segs = np.empty((0, 2, 2))
         segs_t = np.empty(0)
         segs_ind = np.zeros((0, 2), dtype="int")
-        for j in range(0, len(I) - 1):
-            range_j = np.arange(I[j] + 1, I[j + 1] + 1)
+        for j in range(0, len(idx) - 1):
+            range_j = np.arange(idx[j] + 1, idx[j + 1] + 1)
             xd = self.x[range_j]
             yd = self.y[range_j]
             td = self.t[range_j]

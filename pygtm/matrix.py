@@ -12,7 +12,15 @@ from pygtm import tools
 
 
 class matrix_space:
+    """Transition matrix computation and spectral analysis."""
+
     def __init__(self, domain):
+        """Initialize matrix space with a physical domain.
+
+        Args:
+            domain: Physical space domain object.
+
+        """
         self.domain = domain
         self.N = len(domain.bins)
         self.T = None
@@ -59,7 +67,8 @@ class matrix_space:
         self.B = np.asarray(self.B, dtype="object")
         keep = self.B.astype(bool)
 
-        # print('Domain contains %g bins. (%g bins were removed)' % (sum(keep), len(self.B) - sum(keep)))
+        # print('Domain contains %g bins. (%g bins were removed)' %
+        #       (sum(keep), len(self.B) - sum(keep)))
         self.B, self.domain.bins, self.domain.id_og = tools.filter_vector(
             [self.B, self.domain.bins, self.domain.id_og], keep
         )
@@ -72,7 +81,8 @@ class matrix_space:
         )  # number of particles per bin at time t0
         self.P = np.zeros((self.N, self.N))
         for i in range(0, self.N):
-            # get elements of all particles in bins B[i] at the final time (-1 when outside of domain)
+            # get elements of all particles in bins B[i] at the final time
+            # (-1 when outside of domain)
             idel = self.domain.find_element(data.xt[self.B[i]], data.yt[self.B[i]])
             idel = idel[idel > -1]
 
@@ -86,7 +96,8 @@ class matrix_space:
                 self.P[i, np.unique(idel)] += np.divide(weight[weight > 0], self.M[i])
 
         # remove empty lines and columns
-        # we have to do it recursively because remove one line/column might create another one
+        # we have to do it recursively because removing one line/column
+        # might create another one
         zero_line = np.where(~self.P.any(axis=1))[0]
         while len(zero_line):
             self.P = np.delete(self.P, zero_line, axis=0)
@@ -103,7 +114,7 @@ class matrix_space:
         return
 
     def transition_matrix_extras(self, data):
-        """Miscellaneous operations perform after the calculations of the transition matrix.
+        """Perform miscellaneous operations after calculating transition matrix.
 
         Args:
             data: trajectory object
@@ -254,7 +265,8 @@ class matrix_space:
             mat: transition matrix
 
         Returns:
-            graph: dictionary where each key is a node and the values are its connection(s)
+            graph: dictionary where each key is a node and values are
+                its connection(s)
 
         """
         graph = {}

@@ -8,13 +8,25 @@ from pygtm import tools
 
 
 class physical_space:
+    """Discretization of the continuous domain into physical bins."""
+
     def __init__(self, lon, lat, resolution):
+        """Initialize physical space with domain limits and resolution.
+
+        Args:
+            lon: Domain longitude boundaries [lon_min, lon_max].
+            lat: Domain latitude boundaries [lat_min, lat_max].
+            resolution: Maximum number of points in one direction.
+
+        """
         self.lon = lon
         self.lat = lat
         self.resolution = resolution
 
-        # the bins are generated inside the limit of the domain and one variable controlling the spatial resolution
-        # the number of bins in one direction equal to resolution and the other direction is chosen to build square bins
+        # the bins are generated inside the limit of the domain and one
+        # variable controlling the spatial resolution. The number of bins
+        # in one direction equals resolution and the other direction is
+        # chosen to build square bins
         self.nx, self.ny = self.uniform_grid(self.lon, self.lat, self.resolution)
         self.coords, self.bins, self.vx, self.vy, self.dx, self.dy = self.create_grid(
             lon, lat, self.nx, self.ny
@@ -24,18 +36,19 @@ class physical_space:
         self.id = np.arange(0, (self.ny - 1) * (self.nx - 1))
         self.id = self.id.reshape((self.ny - 1, self.nx - 1), order="C")
 
-        # during the algorithm if no particle is found inside bin i, it will be remove.
-        # As a consequence, the probabilities of reaching (leaving) the element X is not
-        # necessary located at line (column) X of the transition matrix P.
-        # id_og: size evolve at the same time as self.bins
-        #        allow from an element id of id[i,j] retrieved from a (lon,lat) -> id_og -> to get the index of P
-        #        which is needed to initialize a tracer from a list of coordinates
+        # during the algorithm if no particle is found inside bin i, it will be
+        # removed. As a consequence, the probabilities of reaching (leaving) the
+        # element X is not necessarily located at line (column) X of the
+        # transition matrix P.
+        # id_og: size evolves at the same time as self.bins; allows from an
+        # element id of id[i,j] retrieved from a (lon,lat) -> id_og -> to get
+        # the index of P which is needed to initialize a tracer from coordinates
         self.N0 = self.id.size
         self.id_og = np.arange(0, self.N0)
 
     @staticmethod
     def uniform_grid(lon, lat, size):
-        """Return the number of bins in x-y direction to have bins as square as possible.
+        """Return number of bins in x-y direction to make bins as square as possible.
 
         Args:
             lon: list with limits of the boundaries in the zonal direction
@@ -68,8 +81,8 @@ class physical_space:
 
         Returns:
             coords: coordinates of all N points of the domain
-            bins: square elements connectivity 4 coordinates index per line (per element)
-                  stored in anti-anticlockwise order
+            bins: square elements connectivity with 4 coordinate indices
+                per line (per element) stored in anti-clockwise order
             x: vector of coordinates in the zonal direction
             y: vector of coordinates in the meridional direction
             dx: size of the zonal grid
