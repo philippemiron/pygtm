@@ -1,3 +1,5 @@
+"""Unit tests for the tools module."""
+
 import numpy as np
 import pytest
 
@@ -5,6 +7,7 @@ from pygtm.tools import filter_vector, ismember
 
 
 def test_ismember():
+    """Test ismember index lookup between arrays."""
     a = [1, 2]
     b = [3, 4]
     assert ismember(a, b).tolist() == [-1, -1]
@@ -16,6 +19,7 @@ def test_ismember():
 
 
 def test_filter_vector():
+    """Test filtering vectors using indices and booleans."""
     # the second arguments is either a list of indices or a
     # boolean the size of the first arguments
     a = np.array([1, 2, 3, 4, 5])

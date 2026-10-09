@@ -4,7 +4,17 @@ import numpy as np
 
 
 class path_theory:
+    """Transition Path Theory (TPT) calculations on transition matrices."""
+
     def __init__(self, d, P, p):
+        """Initialize path theory object.
+
+        Args:
+            d: Physical space object.
+            P: Transition matrix.
+            p: Stationary distribution.
+
+        """
         self.P = P
         self.p = p
         self.Pm = np.diag(1 / p) @ P.T @ np.diag(p)

@@ -1,9 +1,12 @@
+"""Unit tests for physical space discretization."""
+
 import numpy as np
 
 from pygtm.physical import physical_space
 
 
 def test_uniform_grid():
+    """Test computation of uniform grid dimensions."""
     nx, ny = physical_space.uniform_grid([0, 10], [0, 10], 10)
     assert (nx, ny) == (10, 10)
 
@@ -27,6 +30,7 @@ def test_uniform_grid():
 
 
 def test_create_grid():
+    """Test mesh grid coordinates and element connectivity creation."""
     # create a small grid of 6 elements (3 in lon and 2 in lat)
     coords, elements, x, y, dx, dy = physical_space.create_grid([0, 10], [0, 2], 4, 3)
     assert coords[:, 0].tolist() == [
@@ -114,6 +118,7 @@ def test_create_grid():
 
 
 def test_find_element():
+    """Test locating grid elements for coordinate points."""
     lon = [0, 3]
     lat = [0, 3]
     n = 4
