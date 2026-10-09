@@ -28,9 +28,7 @@ def test_uniform_grid():
 
 def test_create_grid():
     # create a small grid of 6 elements (3 in lon and 2 in lat)
-    coords, elements, x, y, dx, dy = physical_space.create_grid(
-        [0, 10], [0, 2], 4, 3
-    )
+    coords, elements, x, y, dx, dy = physical_space.create_grid([0, 10], [0, 2], 4, 3)
     assert coords[:, 0].tolist() == [
         0,
         10 / 3,
@@ -62,9 +60,7 @@ def test_create_grid():
 
     # negative values in lon lat
     # create a small grid of 8 elements (4 in lon and 2 in lat)
-    coords, elements, x, y, dx, dy = physical_space.create_grid(
-        [-5, 5], [-1, 1], 5, 3
-    )
+    coords, elements, x, y, dx, dy = physical_space.create_grid([-5, 5], [-1, 1], 5, 3)
     assert coords[:, 0].tolist() == [
         -5,
         -2.5,
