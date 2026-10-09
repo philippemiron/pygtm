@@ -1,6 +1,6 @@
 [project]
 name = "pygtm"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python Geophysical Transition Matrix"
 authors = [
      {name = "Philippe Miron", email = "pmiron@fsu.edu"}
@@ -21,8 +21,16 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ipykernel>=6.29.5",
+    "pytest>=9.1.1",
     "ruff>=0.9.3",
 ]
 
 [tool.ruff.lint]
 select = ["D", "E", "F", "I"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
